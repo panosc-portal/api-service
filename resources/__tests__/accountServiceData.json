@@ -1,0 +1,47 @@
+{
+  "port": 3100,
+  "roles": [
+    {
+      "id": 1,
+      "name": "Administrator",
+      "description": "God"
+    },
+    {
+      "id": 2,
+      "name": "User",
+      "description": "Standard User"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "username": "User1 Admin",
+      "uid": 101,
+      "gid": 201,
+      "email": "user1@foo.bar",
+      "homePath": "/home/user1",
+      "active": true,
+      "createdAt": "2014-01-01T23:28:56.782Z",
+      "role": {
+        "id": 1,
+        "name": "Administrator",
+        "description": "Administrator Role"
+      }
+    },
+    {
+      "id": 2,
+      "username": "User2 Standard",
+      "uid": 102,
+      "gid": 202,
+      "email": "user1@foo.bar",
+      "homePath": "/home/user2",
+      "active": true,
+      "createdAt": "2018-05-01T23:28:56.782Z",
+      "role": {
+        "id": 2,
+        "name": "User",
+        "description": "Standard User"
+      }
+    }
+  ]
+}

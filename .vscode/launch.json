@@ -1,0 +1,53 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Program",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}/index.js",
+      "env": {
+        "NODE_ENV": "test",
+        "API_SERVICE_ACCOUNT_SERVICE_HOST": "127.0.0.1",
+        "API_SERVICE_ACCOUNT_SERVICE_PORT": "3100",
+        "API_SERVICE_CLOUD_SERVICE_HOST": "127.0.0.1",
+        "API_SERVICE_CLOUD_SERVICE_PORT": "3101"
+      },
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch all tests",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+      "args": [
+        "--timeout",
+        "999999",
+        "--colors",
+        "${workspaceFolder}/dist/__tests__"
+      ],
+      "env": {
+        "NODE_ENV": "test",
+        "API_SERVICE_ACCOUNT_SERVICE_HOST": "127.0.0.1",
+        "API_SERVICE_ACCOUNT_SERVICE_PORT": "3100",
+        "API_SERVICE_CLOUD_SERVICE_HOST": "127.0.0.1",
+        "API_SERVICE_CLOUD_SERVICE_PORT": "3101"
+      },
+      "preLaunchTask": "npm: pretest",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+    }
+  ]
+}
