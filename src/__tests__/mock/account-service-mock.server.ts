@@ -17,7 +17,6 @@ export class AccountServiceMockServer {
   roles: Role[] = [];
   users: User[] = [];
 
-
   constructor() {
   }
 
@@ -35,9 +34,21 @@ export class AccountServiceMockServer {
       const app = express();
       app.use(express.json());
 
+
+
       app.get('/api/v1/me', (req, res) => {
         //console.log("/api/v1/users");
-        const user = this.users.find(aUser => aUser.id === 1);
+        if (!req.header('access_token')) {
+          res.status(403).send("Missing access token");
+          return;
+        }
+        const access_token = req.header('access_token');
+        let connectedUserId: number = 1;
+        if (!isNaN(Number(access_token))) {
+          connectedUserId = Number(access_token);
+        }
+
+        const user = this.users.find(aUser => aUser.id === connectedUserId);
         res.status(200).send(user);
       });
 

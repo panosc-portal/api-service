@@ -30,13 +30,23 @@
     },
     {
       "id": 2,
-      "username": "User2 Standard",
+      "username": "User2 has no Role (so User)",
       "uid": 102,
       "gid": 202,
-      "email": "user1@foo.bar",
+      "email": "user3@foo.bar",
       "homePath": "/home/user2",
       "active": true,
-      "createdAt": "2018-05-01T23:28:56.782Z",
+      "createdAt": "2018-05-01T23:28:56.782Z"
+    },
+    {
+      "id": 3,
+      "username": "User3 Role User",
+      "uid": 103,
+      "gid": 203,
+      "email": "user3@foo.bar",
+      "homePath": "/home/user3",
+      "active": true,
+      "createdAt": "2018-07-01T23:28:56.782Z",
       "role": {
         "id": 2,
         "name": "User",

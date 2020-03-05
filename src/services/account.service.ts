@@ -1,5 +1,5 @@
 import { bind, BindingScope } from '@loopback/core';
-import { HttpErrors } from '@loopback/rest';
+import { HttpErrors, Request } from '@loopback/rest';
 import Axios, { AxiosInstance } from 'axios';
 import { APPLICATION_CONFIG } from '../application-config';
 import { User } from '../models/user.model';
@@ -8,7 +8,6 @@ import { User } from '../models/user.model';
 export class AccountService {
 
   private _axiosInstance: AxiosInstance;
-  private _connectedUser: User = null;
 
   constructor() {
     //https://levelup.gitconnected.com/a-typescript-safe-api-82cc22c4f92d
@@ -23,22 +22,33 @@ export class AccountService {
   }
 
 
-  async getConnectedUser(): Promise<User> {
-    if (!this._connectedUser) {
-      const res = await this._axiosInstance.get('me');
-      this._connectedUser = res.data;
+  async getConnectedUser(request: Request): Promise<User> {
+    if (!request.headers.access_token) {
+      throw new HttpErrors[403](`The user is not connected`);
     }
-    return this._connectedUser;
+
+    const res = await this._axiosInstance.get('me', {
+      headers: {
+        'Content-Type': 'application/json',
+        'access_token': request.headers.access_token
+      }
+    });
+    return res.data;
   }
 
-  async requiredRole(roleName: string): Promise<void> {
-    const connectedUser = await this.getConnectedUser();
-    const connectedUserRoleName = connectedUser.role.name;
+
+  async requiredRole(request: Request, roleName: string): Promise<User> {
+    const connectedUser = await this.getConnectedUser(request);
+    if (roleName == 'User') return; //Anyone is User => no role check required
+    let connectedUserRoleName: string = 'User';
+    if (connectedUser.role) {
+      connectedUserRoleName = connectedUser.role.name;
+    }
     if (connectedUserRoleName != roleName) {
       throw new HttpErrors[403](`The connected required role is ${roleName}`);
     }
+    return connectedUser;
   }
-
 
 
   async getUsers(): Promise<User[]> {
@@ -57,9 +67,11 @@ export class AccountService {
       //return {};
     }
 
-
   }
 
+  async deleteUserById(id: Number) {
+    this._axiosInstance.delete('users/' + id);
+  }
 
 
 

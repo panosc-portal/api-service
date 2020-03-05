@@ -1,5 +1,4 @@
-import { del, get, getModelSchemaRef, param, post, requestBody, HttpErrors } from '@loopback/rest';
-import { requiredRole } from '../decorators';
+import { del, get, getModelSchemaRef, param, post, requestBody, HttpErrors, RestBindings, Request } from '@loopback/rest';
 import { inject } from '@loopback/context';
 import { AccountService } from '../services';
 import { User, Role } from '../models';
@@ -8,35 +7,11 @@ import { BaseController } from './base.controller';
 
 export class UserController extends BaseController {
   constructor(
-    @inject('services.AccountService') private _accountService: AccountService,
-    /*
-    @inject('services.UserService') private _userService: UserService,
-    @inject('services.RoleService') private _roleService: RoleService
-    */
+    @inject(RestBindings.Http.REQUEST) private _request: Request,
+    @inject('services.AccountService') private _accountService: AccountService
   ) {
     super();
   }
-
-
-  @get('/account', {
-    summary: 'Gets the current connected user',
-    responses: {
-      '200': {
-        description: 'Ok',
-        content: {
-          'application/json': {
-            schema: { type: 'array', items: getModelSchemaRef(User) }
-          }
-        }
-      }
-    }
-  })
-  @requiredRole('User')
-  async getAccount(): Promise<object> {
-    const connectedUser = this._accountService.getConnectedUser();
-    return connectedUser;
-  }
-
 
 
   @get('/users', {
@@ -53,7 +28,7 @@ export class UserController extends BaseController {
     }
   })
   async getUsers(): Promise<object> {
-    await this._accountService.requiredRole('User');
+    await this._accountService.requiredRole(this._request, 'User');
     return this._accountService.getUsers();
   }
 
@@ -68,8 +43,8 @@ export class UserController extends BaseController {
       }
     }
   })
-  @requiredRole('User')
   async getUser(@param.path.number('id') id: number): Promise<object> {
+    await this._accountService.requiredRole(this._request, 'User');
     try {
       const res = await this._accountService.getUserById(id);
       return res;
