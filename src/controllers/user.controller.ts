@@ -1,4 +1,4 @@
-import { del, get, getModelSchemaRef, param, post, requestBody, HttpErrors, RestBindings, Request } from '@loopback/rest';
+import { del, get, getModelSchemaRef, param, post, requestBody, RestBindings, Request } from '@loopback/rest';
 import { inject } from '@loopback/context';
 import { AccountService } from '../services';
 import { User, Role } from '../models';
@@ -13,6 +13,7 @@ export class UserController extends BaseController {
     super();
   }
 
+  //=== Users
 
   @get('/users', {
     summary: 'Gets a list of users',
@@ -27,8 +28,8 @@ export class UserController extends BaseController {
       }
     }
   })
-  async getUsers(): Promise<object> {
-    await this._accountService.requiredRole(this._request, 'User');
+  async getUsers(): Promise<User[]> {
+    await this._accountService.requireAdminRole(this._request);
     return this._accountService.getUsers();
   }
 
@@ -43,48 +44,17 @@ export class UserController extends BaseController {
       }
     }
   })
-  async getUser(@param.path.number('id') id: number): Promise<object> {
-    await this._accountService.requiredRole(this._request, 'User');
+  async getUser(@param.path.number('id') id: number): Promise<User> {
+    await this._accountService.requireAdminRole(this._request);
+    return this._accountService.getUser(id);
+    /*
     try {
       const res = await this._accountService.getUserById(id);
       return res;
     } catch (error) {
-      //logger.error(`Got error getting ${this._baseUrl} from provider '${provider.name}': ${error}`);
       throw new HttpErrors[404](`The user id ${id} doesn't exist`);
     }
-  }
-
-
-  @post('/users/{userId}/roles/{roleId}', {
-    summary: 'Adds a role to a user',
-    responses: {
-      '200': {
-        description: 'Ok',
-        content: { 'application/json': { schema: getModelSchemaRef(User) } }
-      }
-    }
-  })
-  async addUserRole(
-    @param.path.number('userId') userId: number,
-    @param.path.number('roleId') roleId: number
-  ): Promise<object> {
-    //TO BE COMPLETED
-    return;
-  }
-
-
-  @del('/users/{userId}/roles/{roleId}', {
-    summary: 'Deletes the role from a user',
-    responses: {
-      '200': {
-        description: 'Ok'
-      }
-    }
-  })
-  async deleteUserRole(@param.path.number('userId') userId: number, @param.path.string('roleId') roleId: number) {
-    //TO BE COMPLETED
-    //const user: User = await this._userService.getById(userId);
-    this.throwNotFoundIfNull('User with given id does not exist');
+    */
   }
 
 
@@ -97,9 +67,8 @@ export class UserController extends BaseController {
     }
   })
   async deleteAllUser() {
-    //TO BE COMPLETED
-    //const allUsers = await this._userService.getAll();
-    //allUsers.forEach(user => this._userService.delete(user));
+    await this._accountService.requireAdminRole(this._request);
+    this._accountService.deleteUsers();
   }
 
 
@@ -112,11 +81,8 @@ export class UserController extends BaseController {
     }
   })
   async deleteUser(@param.path.number('id') id: number) {
-    //TO BE COMPLETED
-    //const user = await this._userService.getById(id);
-    //this.throwNotFoundIfNull(user, 'User with given id does not exist');
-    //return this._userService.delete(user);
-    return;
+    await this._accountService.requireAdminRole(this._request);
+    this._accountService.deleteUser(id);
   }
 
 
@@ -129,10 +95,42 @@ export class UserController extends BaseController {
       }
     }
   })
-  async createUser(@requestBody({ description: 'A user' }) user: User): Promise<User> {
-    //TO BE COMPLETED
-    return;
+  async createUser(@requestBody({ description: 'A user' }) userCreatorDto: Object): Promise<User> {
+    await this._accountService.requireAdminRole(this._request);
+    return this._accountService.createUser(userCreatorDto);
   }
+
+
+  //=== Users roles
+
+  @post('/users/{userId}/roles/{roleId}', {
+    summary: 'Adds a role to a user',
+    responses: {
+      '200': {
+        description: 'Ok',
+        content: { 'application/json': { schema: getModelSchemaRef(User) } }
+      }
+    }
+  })
+  async addUserRole(@param.path.number('userId') userId: number, @param.path.number('roleId') roleId: number): Promise<User> {
+    await this._accountService.requireAdminRole(this._request);
+    return this._accountService.addUserRole(userId, roleId);
+  }
+
+
+  @del('/users/{userId}/roles/{roleId}', {
+    summary: 'Deletes the role from a user',
+    responses: {
+      '200': {
+        description: 'Ok'
+      }
+    }
+  })
+  async deleteUserRole(@param.path.number('userId') userId: number, @param.path.string('roleId') roleId: number) {
+    await this._accountService.requireAdminRole(this._request);
+    this._accountService.deleteUserRole(userId, roleId);
+  }
+
 
 
 }

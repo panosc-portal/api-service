@@ -53,7 +53,6 @@ export class AccountServiceMockServer {
       });
 
       app.get('/api/v1/users', (req, res) => {
-        //console.log("/api/v1/users");
         res.status(200).send(this.users);
       });
 
@@ -70,7 +69,7 @@ export class AccountServiceMockServer {
 
 
 
-      app.listen(this.port, () => console.log(`Kubernetes Mock Server listening on port ${this.port}!`));
+      app.listen(this.port, () => console.log(`Account Service Mock Server listening on port ${this.port}!`));
 
     });
 

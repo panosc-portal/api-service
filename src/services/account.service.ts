@@ -21,7 +21,9 @@ export class AccountService {
 
   }
 
+  //=== Connected User and Role
 
+  // Return the connected user for convenience
   async getConnectedUser(request: Request): Promise<User> {
     if (!request.headers.access_token) {
       throw new HttpErrors[403](`The user is not connected`);
@@ -39,8 +41,8 @@ export class AccountService {
 
   async requiredRole(request: Request, roleName: string): Promise<User> {
     const connectedUser = await this.getConnectedUser(request);
-    if (roleName == 'User') return; //Anyone is User => no role check required
-    let connectedUserRoleName: string = 'User';
+    if (roleName == 'user') return; //Anyone is User => no role check required
+    let connectedUserRoleName: string = 'user';
     if (connectedUser.role) {
       connectedUserRoleName = connectedUser.role.name;
     }
@@ -50,31 +52,60 @@ export class AccountService {
     return connectedUser;
   }
 
+  async requireAdminRole(request: Request): Promise<User> {
+    return this.requiredRole(request, 'admin');
+  }
+
+  isAdmin(user: User): boolean {
+    if (!user.role) return false;
+    return user.role.name == 'admin';
+  }
+
+
+  //=== Users object
 
   async getUsers(): Promise<User[]> {
     const res = await this._axiosInstance.get('users');
     return res.data;
   }
 
-
-  async getUserById(id: number): Promise<User> {
-    try {
-      const res = await this._axiosInstance.get('users/' + id);
-      return res.data;
-    } catch (error) {
-      //logger.error(`Got error getting ${this._baseUrl} from provider '${provider.name}': ${error}`);
-      throw error;
-      //return {};
-    }
-
+  async getUser(id: number): Promise<User> {
+    const res = await this._axiosInstance.get(`users/${id}`);
+    return res.data;
   }
 
-  async deleteUserById(id: Number) {
-    this._axiosInstance.delete('users/' + id);
+  async createUser(userCreatorDto: Object): Promise<User> {
+    const res = await this._axiosInstance.post('users', userCreatorDto);
+    return res.data;
+  }
+
+  async updateUser(id: number, userUpdatorDto: Object): Promise<User> {
+    const res = await this._axiosInstance.put(`users/${id}`, userUpdatorDto);
+    return res.data;
+  }
+
+  async deleteUser(id: Number) {
+    this._axiosInstance.delete(`users/${id}`);
+  }
+
+  async deleteUsers() {
+    this._axiosInstance.delete('users');
   }
 
 
+  //=== Users roles
 
+  async addUserRole(userId: number, roleId: number): Promise<User> {
+    const res = await this._axiosInstance.post(`users/${userId}/roles/${roleId}`);
+    return res.data;
+  }
+
+  async deleteUserRole(userId: number, roleId: number) {
+    const res = await this._axiosInstance.delete(`users/${userId}/roles/${roleId}`);
+  }
+
+
+  //=== Roles
 
 
 

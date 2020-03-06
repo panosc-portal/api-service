@@ -1,8 +1,8 @@
 import { bind, BindingScope } from '@loopback/core';
-import { HttpErrors, Request } from '@loopback/rest';
 import Axios, { AxiosInstance } from 'axios';
 import { APPLICATION_CONFIG } from '../application-config';
-import { Instance } from '../models';
+import { Instance, InstanceAuthorisation, InstanceMember, CloudInstanceCommand, CloudInstanceState, CloudInstanceNetwork } from '../models';
+
 
 @bind({ scope: BindingScope.SINGLETON })
 export class CloudService {
@@ -20,41 +20,80 @@ export class CloudService {
 
   }
 
+  //=== Instances objects
 
-  async getInstancesByUserId(id: number): Promise<Instance[]> {
+  async getUserInstances(id: number): Promise<Instance[]> {
     const res = await this._axiosInstance.get(`users/${id}/instances`);
     return res.data;
   }
 
   // Problèmes a regler:
-  // Coté Cloud Service tous les post/put instances retournent un InstanceDto et non une Instance
-  // Ca ne colle pas avec la def swagger
-  // Et il ne passe pas le meme objet en get/post/put => ici instanceDto = Object
+  // Coté Cloud Service les post/put retournent un dto et non l'objet entier, Ca ne colle pas avec les def swagger
+  // Pleins de Dto différents (create+update par entité) en params => trop de models à maintenir  => utilisation d'Object assumé :)
+  // (mais jamais en résultat pour que ça colle avec swagger)
 
-  async postInstanceByUserId(userId: number, instanceDto: object): Promise<Instance> {
+  async createUserInstance(userId: number, instanceDto: object): Promise<Instance> {
     const res = await this._axiosInstance.post(`users/${userId}/instances`, instanceDto);
     return res.data;
   }
 
-  async putInstanceByUserId(userId: number, instanceId: number, instanceDto: object): Promise<Instance> {
+  async updateUserInstance(userId: number, instanceId: number, instanceDto: object): Promise<Instance> {
     const res = await this._axiosInstance.post(`users/${userId}/instances/${instanceId}`, instanceDto);
     return res.data;
   }
 
-  async getInstanceByUserIdInstanceId(userId: number, instanceId: number): Promise<Instance> {
+  async getUserInstance(userId: number, instanceId: number): Promise<Instance> {
     const res = await this._axiosInstance.get(`users/${userId}/instances/${instanceId}`);
     return res.data;
   }
 
-  async deleteInstanceByUserIdInstanceId(userId: number, instanceId: number) {
+  async deleteUserInstance(userId: number, instanceId: number) {
     const res = await this._axiosInstance.delete(`users/${userId}/instances/${instanceId}`);
   }
 
+  //=== Instances info and actions (State, Network...)
 
-  async getXxx(): Promise<Instance> {
-    const res = await this._axiosInstance.get('xxx');
+  async getUserInstanceState(userId: number, instanceId: number): Promise<CloudInstanceState> {
+    const res = await this._axiosInstance.get(`users/${userId}/instances/${instanceId}/state`);
     return res.data;
   }
+
+  async getUserInstanceNetwork(userId: number, instanceId: number): Promise<CloudInstanceNetwork> {
+    const res = await this._axiosInstance.get(`users/${userId}/instances/${instanceId}/network`);
+    return res.data;
+  }
+
+  async executeUserInstanceAction(userId: number, instanceId: number): Promise<Instance> {
+    const res = await this._axiosInstance.get(`users/${userId}/instances/${instanceId}/actions`);
+    return res.data;
+  }
+
+  async validateUserInstanceToken(userId: number, instanceId: number, token: string): Promise<InstanceAuthorisation> {
+    const res = await this._axiosInstance.post(`users/${userId}/instances/${instanceId}/token`, token);
+    return res.data;
+  }
+
+  //=== Instances members
+
+  async getAllUserInstanceMembers(userId: number, instanceId: number): Promise<InstanceMember[]> {
+    const res = await this._axiosInstance.get(`users/${userId}/instances/${instanceId}/members`);
+    return res.data;
+  }
+
+  async createUserInstanceMember(userId: number, instanceId: number, instanceMemberCreatorDto: Object): Promise<InstanceMember> {
+    const res = await this._axiosInstance.post(`users/${userId}/instances/${instanceId}/members`, instanceMemberCreatorDto);
+    return res.data;
+  }
+
+  async updateUserInstanceMember(userId: number, instanceId: number, memberId: number, instanceMemberUpdatorDto: Object): Promise<InstanceMember> {
+    const res = await this._axiosInstance.put(`users/${userId}/instances/${instanceId}/members/${memberId}`, instanceMemberUpdatorDto);
+    return res.data;
+  }
+
+  async deleteUserInstanceMember(userId: number, instanceId: number, memberId: number) {
+    const res = await this._axiosInstance.delete(`users/${userId}/instances/${instanceId}/members/${memberId}`);
+  }
+
 
 
 }
