@@ -1,6 +1,6 @@
 import express from 'express';
 import { lifeCycleObserver } from '@loopback/core';
-import { User, Role } from "../../models";
+import { User, Role } from "../../models/account-service";
 import * as fs from 'fs';
 
 export interface AccountServiceMockServerData {

@@ -1,7 +1,7 @@
 import { del, get, getModelSchemaRef, RestBindings, Request } from '@loopback/rest';
 import { inject } from '@loopback/context';
 import { AccountService, CloudService } from '../services';
-import { User } from '../models';
+import { User } from '../models/account-service';
 import { BaseController } from './base.controller';
 
 

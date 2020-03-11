@@ -1,7 +1,6 @@
 import { model, property } from '@loopback/repository';
-import { User } from './user.model';
-import { Instance } from './instance.model';
-import { InstanceMemberRole } from './instance-member-role.enum';
+import { User } from '../account-service';
+import { InstanceMemberRole } from './';
 
 @model()
 export class InstanceMember {
@@ -25,7 +24,6 @@ export class InstanceMember {
   })
   instanceId: number;
 
-  instance: Instance;
 
   @property({
     type: 'string'

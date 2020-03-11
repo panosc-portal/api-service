@@ -1,11 +1,11 @@
 import express from 'express';
 import { lifeCycleObserver } from '@loopback/core';
-import { Instance, InstanceAuthorisation, InstanceMember, CloudInstanceCommand, CloudInstanceState, CloudInstanceNetwork } from '../../models';
+import { InstanceDto } from '../../models/cloud-service';
 import * as fs from 'fs';
 
 export interface CloudServiceMockServerData {
   port: number;
-  instances: Instance[];
+  instances: InstanceDto[];
 }
 
 @lifeCycleObserver('server')
@@ -13,7 +13,7 @@ export class CloudServiceMockServer {
   private _server = null;
 
   port: number;
-  instances: Instance[] = [];
+  instances: InstanceDto[] = [];
 
   constructor() {
   }

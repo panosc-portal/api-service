@@ -2,7 +2,7 @@ import { bind, BindingScope } from '@loopback/core';
 import { HttpErrors, Request } from '@loopback/rest';
 import Axios, { AxiosInstance } from 'axios';
 import { APPLICATION_CONFIG } from '../application-config';
-import { User } from '../models/user.model';
+import { User } from '../models/account-service';
 
 @bind({ scope: BindingScope.SINGLETON })
 export class AccountService {

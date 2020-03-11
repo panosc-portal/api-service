@@ -1,7 +1,7 @@
 import { bind, BindingScope } from '@loopback/core';
 import Axios, { AxiosInstance } from 'axios';
 import { APPLICATION_CONFIG } from '../application-config';
-import { Instance, InstanceAuthorisation, InstanceMember, CloudInstanceCommand, CloudInstanceState, CloudInstanceNetwork } from '../models';
+import { InstanceDto, InstanceCreatorDto, InstanceUpdatorDto, InstanceAuthorisationDto, InstanceMember, InstanceMemberCreatorDto, InstanceMemberUpdatorDto, CloudInstanceState, CloudInstanceNetwork } from '../models/cloud-service';
 
 
 @bind({ scope: BindingScope.SINGLETON })
@@ -22,7 +22,7 @@ export class CloudService {
 
   //=== Instances objects
 
-  async getUserInstances(id: number): Promise<Instance[]> {
+  async getUserInstances(id: number): Promise<InstanceDto[]> {
     const res = await this._axiosInstance.get(`users/${id}/instances`);
     return res.data;
   }
@@ -32,17 +32,17 @@ export class CloudService {
   // Pleins de Dto différents (create+update par entité) en params => trop de models à maintenir  => utilisation d'Object assumé :)
   // (mais jamais en résultat pour que ça colle avec swagger)
 
-  async createUserInstance(userId: number, instanceDto: object): Promise<Instance> {
-    const res = await this._axiosInstance.post(`users/${userId}/instances`, instanceDto);
+  async createUserInstance(userId: number, instanceCreator: InstanceCreatorDto): Promise<InstanceDto> {
+    const res = await this._axiosInstance.post(`users/${userId}/instances`, InstanceCreatorDto);
     return res.data;
   }
 
-  async updateUserInstance(userId: number, instanceId: number, instanceDto: object): Promise<Instance> {
-    const res = await this._axiosInstance.post(`users/${userId}/instances/${instanceId}`, instanceDto);
+  async updateUserInstance(userId: number, instanceId: number, instanceUpdatorDto: InstanceUpdatorDto): Promise<InstanceDto> {
+    const res = await this._axiosInstance.post(`users/${userId}/instances/${instanceId}`, InstanceUpdatorDto);
     return res.data;
   }
 
-  async getUserInstance(userId: number, instanceId: number): Promise<Instance> {
+  async getUserInstance(userId: number, instanceId: number): Promise<InstanceDto> {
     const res = await this._axiosInstance.get(`users/${userId}/instances/${instanceId}`);
     return res.data;
   }
@@ -63,12 +63,12 @@ export class CloudService {
     return res.data;
   }
 
-  async executeUserInstanceAction(userId: number, instanceId: number): Promise<Instance> {
+  async executeUserInstanceAction(userId: number, instanceId: number): Promise<InstanceDto> {
     const res = await this._axiosInstance.get(`users/${userId}/instances/${instanceId}/actions`);
     return res.data;
   }
 
-  async validateUserInstanceToken(userId: number, instanceId: number, token: string): Promise<InstanceAuthorisation> {
+  async validateUserInstanceToken(userId: number, instanceId: number, token: string): Promise<InstanceAuthorisationDto> {
     const res = await this._axiosInstance.post(`users/${userId}/instances/${instanceId}/token`, token);
     return res.data;
   }
@@ -80,12 +80,12 @@ export class CloudService {
     return res.data;
   }
 
-  async createUserInstanceMember(userId: number, instanceId: number, instanceMemberCreatorDto: Object): Promise<InstanceMember> {
+  async createUserInstanceMember(userId: number, instanceId: number, instanceMemberCreatorDto: InstanceMemberCreatorDto): Promise<InstanceMember> {
     const res = await this._axiosInstance.post(`users/${userId}/instances/${instanceId}/members`, instanceMemberCreatorDto);
     return res.data;
   }
 
-  async updateUserInstanceMember(userId: number, instanceId: number, memberId: number, instanceMemberUpdatorDto: Object): Promise<InstanceMember> {
+  async updateUserInstanceMember(userId: number, instanceId: number, memberId: number, instanceMemberUpdatorDto: InstanceMemberUpdatorDto): Promise<InstanceMember> {
     const res = await this._axiosInstance.put(`users/${userId}/instances/${instanceId}/members/${memberId}`, instanceMemberUpdatorDto);
     return res.data;
   }

@@ -1,7 +1,7 @@
 import { del, get, getModelSchemaRef, param, post, put, requestBody, RestBindings, Request } from '@loopback/rest';
 import { inject } from '@loopback/context';
 import { AccountService, CloudService } from '../services';
-import { Instance, InstanceAuthorisation, InstanceMember, CloudInstanceCommand, CloudInstanceState, CloudInstanceNetwork } from '../models';
+import { InstanceDto, InstanceCreatorDto, InstanceAuthorisationDto, InstanceMember, InstanceMemberCreatorDto, InstanceMemberUpdatorDto, CloudInstanceCommand, CloudInstanceState, CloudInstanceNetwork, InstanceUpdatorDto } from '../models/cloud-service';
 import { BaseController } from './base.controller';
 
 
@@ -25,13 +25,13 @@ export class AccountInstanceController extends BaseController {
         description: 'Ok',
         content: {
           'application/json': {
-            schema: { type: 'array', items: getModelSchemaRef(Instance) }
+            schema: { type: 'array', items: getModelSchemaRef(InstanceDto) }
           }
         }
       }
     }
   })
-  async getInstances(): Promise<Instance[]> {
+  async getInstances(): Promise<InstanceDto[]> {
     const connectedUser = await this._accountService.getConnectedUser(this._request);
     return this._cloudService.getUserInstances(connectedUser.id);
   }
@@ -44,13 +44,13 @@ export class AccountInstanceController extends BaseController {
         description: 'Ok',
         content: {
           'application/json': {
-            schema: { type: 'array', items: getModelSchemaRef(Instance) }
+            schema: { type: 'array', items: getModelSchemaRef(InstanceDto) }
           }
         }
       }
     }
   })
-  async getInstance(instanceId: number): Promise<Instance> {
+  async getInstance(instanceId: number): Promise<InstanceDto> {
     const connectedUser = await this._accountService.getConnectedUser(this._request);
     return await this._cloudService.getUserInstance(connectedUser.id, instanceId);;
   }
@@ -63,15 +63,15 @@ export class AccountInstanceController extends BaseController {
         description: 'Ok',
         content: {
           'application/json': {
-            schema: { type: 'array', items: getModelSchemaRef(Instance) }
+            schema: { type: 'array', items: getModelSchemaRef(InstanceDto) }
           }
         }
       }
     }
   })
-  async createInstance(instanceDto: object): Promise<Instance> {
+  async createInstance(instanceCreatorDto: InstanceCreatorDto): Promise<InstanceDto> {
     const connectedUser = await this._accountService.getConnectedUser(this._request);
-    return this._cloudService.createUserInstance(connectedUser.id, instanceDto);
+    return this._cloudService.createUserInstance(connectedUser.id, instanceCreatorDto);
   }
 
 
@@ -82,15 +82,15 @@ export class AccountInstanceController extends BaseController {
         description: 'Ok',
         content: {
           'application/json': {
-            schema: { type: 'array', items: getModelSchemaRef(Instance) }
+            schema: { type: 'array', items: getModelSchemaRef(InstanceDto) }
           }
         }
       }
     }
   })
-  async updateInstance(instanceId: number, instanceDto: object): Promise<Instance> {
+  async updateInstance(instanceId: number, instanceUpdatorDto: InstanceUpdatorDto): Promise<InstanceDto> {
     const connectedUser = await this._accountService.getConnectedUser(this._request);
-    return this._cloudService.updateUserInstance(connectedUser.id, instanceId, instanceDto);
+    return this._cloudService.updateUserInstance(connectedUser.id, instanceId, instanceUpdatorDto);
   }
 
 
@@ -156,7 +156,7 @@ export class AccountInstanceController extends BaseController {
       }
     }
   })
-  async postInstanceAction(@param.path.number('instanceId') instanceId: number, @requestBody() command: CloudInstanceCommand): Promise<Instance> {
+  async postInstanceAction(@param.path.number('instanceId') instanceId: number, @requestBody() command: CloudInstanceCommand): Promise<InstanceDto> {
     const connectedUser = await this._accountService.getConnectedUser(this._request);
     return this._cloudService.executeUserInstanceAction(connectedUser.id, instanceId);
 
@@ -170,13 +170,13 @@ export class AccountInstanceController extends BaseController {
         description: 'Ok',
         content: {
           'application/json': {
-            schema: getModelSchemaRef(InstanceAuthorisation)
+            schema: getModelSchemaRef(InstanceAuthorisationDto)
           }
         }
       }
     }
   })
-  async validateInstanceToken(@param.path.number('instanceId') instanceId: number, @param.path.string('token') token: string): Promise<InstanceAuthorisation> {
+  async validateInstanceToken(@param.path.number('instanceId') instanceId: number, @param.path.string('token') token: string): Promise<InstanceAuthorisationDto> {
     const connectedUser = await this._accountService.getConnectedUser(this._request);
     return this._cloudService.validateUserInstanceToken(connectedUser.id, instanceId, token);
 
@@ -216,7 +216,7 @@ export class AccountInstanceController extends BaseController {
       }
     }
   })
-  async createInstanceMember(@param.path.number('instanceId') instanceId: number, @requestBody() instanceMemberCreatorDto: Object): Promise<InstanceMember> {
+  async createInstanceMember(@param.path.number('instanceId') instanceId: number, @requestBody() instanceMemberCreatorDto: InstanceMemberCreatorDto): Promise<InstanceMember> {
     const connectedUser = await this._accountService.getConnectedUser(this._request);
     return this._cloudService.createUserInstanceMember(connectedUser.id, instanceId, instanceMemberCreatorDto);
   }
@@ -235,7 +235,7 @@ export class AccountInstanceController extends BaseController {
       }
     }
   })
-  async updateInstanceMember(@param.path.number('instanceId') instanceId: number, @param.path.number('memberId') memberId: number, @requestBody() instanceMemberUpdatorDto: Object): Promise<InstanceMember> {
+  async updateInstanceMember(@param.path.number('instanceId') instanceId: number, @param.path.number('memberId') memberId: number, @requestBody() instanceMemberUpdatorDto: InstanceMemberUpdatorDto): Promise<InstanceMember> {
     const connectedUser = await this._accountService.getConnectedUser(this._request);
     return this._cloudService.updateUserInstanceMember(connectedUser.id, instanceId, memberId, instanceMemberUpdatorDto);
 
