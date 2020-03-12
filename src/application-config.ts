@@ -1,5 +1,4 @@
 export class ApplicationConfig {
-  port: string
   accountService: {
     host: string,
     port: string,
@@ -23,7 +22,6 @@ let applicationConfig: ApplicationConfig;
 export function APPLICATION_CONFIG(): ApplicationConfig {
   if (applicationConfig == null) {
     applicationConfig = {
-      port: process.env.API_SERVICE_PORT,
       accountService: {
         host: process.env.API_SERVICE_ACCOUNT_SERVICE_HOST,
         port: process.env.API_SERVICE_ACCOUNT_SERVICE_PORT

@@ -9,9 +9,11 @@ import { APPLICATION_CONFIG } from './application-config';
 export { ApiServiceApplication };
 
 export async function main(options: ApplicationConfig = {}) {
+  /*
   if (APPLICATION_CONFIG().port) {
     options.rest.port = APPLICATION_CONFIG().port;
   }
+  */
   const app = new ApiServiceApplication(options);
   await app.boot();
   await app.start();
