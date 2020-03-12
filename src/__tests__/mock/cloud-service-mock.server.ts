@@ -43,6 +43,19 @@ export class CloudServiceMockServer {
         res.status(200).send(instances);
       });
 
+      app.get('/api/v1/instances', (req, res) => {
+        res.status(200).send(this.instances);
+      });
+
+      app.get('/api/v1/instances/:instanceId', (req, res) => {
+        const instanceId = +req.params.userId;
+        const instance = this.instances.find(aInstance => aInstance.id === instanceId);
+        if (instance != null) {
+          res.status(200).send(instance);
+        } else {
+          res.status(404).send();
+        }
+      });
 
 
 

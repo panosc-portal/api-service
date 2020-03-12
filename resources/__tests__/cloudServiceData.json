@@ -1,0 +1,33 @@
+{
+  "port": 3101,
+  "instances": [
+    {
+      "id": 1,
+      "cloudId": 1,
+      "name": "instance 1.1",
+      "description": "A test instance 1",
+      "hostname": "instance1.host.eu",
+      "protocols": [
+        {
+          "name": "RDP",
+          "port": 31389
+        },
+        {
+          "name": "GUACD",
+          "port": 30389
+        }
+      ],
+      "flavour": {},
+      "image": {},
+      "plan": {},
+      "createdAt": "2020-01-01",
+      "state": {
+        "cpu": 1,
+        "memory": 1024,
+        "message": "",
+        "status": "RUNNING"
+      },
+      "members": []
+    }
+  ]
+}

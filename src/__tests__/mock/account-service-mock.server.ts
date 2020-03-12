@@ -66,13 +66,39 @@ export class AccountServiceMockServer {
         }
       });
 
+      this._server = app.listen(this.port, (error) => {
+        if (error) {
+          console.log(`Failed to start Account Service Mock Server on port ${this.port}: ${error}`);
 
+        } else {
+          //console.log(`Account Service Mock Server listening on port ${this.port}`)
+          resolve();
+        }
+      });
 
-
-      app.listen(this.port, () => console.log(`Account Service Mock Server listening on port ${this.port}!`));
+      //      app.listen(this.port, () => console.log(`Account Service Mock Server listening on port ${this.port}!`));
 
     });
 
+  }
+
+
+  stop(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      if (this._server != null) {
+        this._server.close((error: Error) => {
+          if (error) {
+            reject(error);
+
+          } else {
+            resolve();
+          }
+        });
+        this._server = null;
+
+        //console.log(`Account Service Mock Server stopped with port ${this.port}`);
+      }
+    });
   }
 
 
