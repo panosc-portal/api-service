@@ -29,6 +29,7 @@
     "prestart": "npm run build",
     "start": "node -r source-map-support/register .",
     "start2": "node -r source-map-support/register index2",
+    "debug": "nodemon -r source-map-support/register --inspect=0.0.0.0 .",
     "prepublishOnly": "npm run test"
   },
   "repository": {
@@ -61,6 +62,7 @@
     "source-map-support": "^0.5.16",
     "@loopback/testlab": "^1.10.3",
     "@types/node": "^10.17.14",
-    "typescript": "~3.7.5"
+    "typescript": "~3.7.5",
+    "nodemon": "^2.0.2"
   }
 }
