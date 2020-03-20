@@ -64,8 +64,9 @@ export class CloudService {
     return res.data;
   }
 
-  async deleteUserInstance(userId: number, instanceId: number) {
+  async deleteUserInstance(userId: number, instanceId: number): Promise<boolean> {
     const res = await this._axiosInstance.delete(`users/${userId}/instances/${instanceId}`);
+    return res.data;
   }
 
   //=== Instances info and actions (State, Network...)
@@ -107,8 +108,9 @@ export class CloudService {
     return res.data;
   }
 
-  async deleteUserInstanceMember(userId: number, instanceId: number, memberId: number) {
+  async deleteUserInstanceMember(userId: number, instanceId: number, memberId: number): Promise<boolean> {
     const res = await this._axiosInstance.delete(`users/${userId}/instances/${instanceId}/members/${memberId}`);
+    return res.data
   }
 
   //=== Plan

@@ -134,10 +134,10 @@ export class AccountInstanceController extends BaseController {
       }
     }
   })
-  async deleteInstance(@param.path.number('instanceId') instanceId: number) {
+  async deleteInstance(@param.path.number('instanceId') instanceId: number): Promise<boolean> {
     try {
       const connectedUser = await this._accountService.getConnectedUser(this._request);
-      await this._cloudService.deleteUserInstance(connectedUser.facilityUserId, instanceId);
+      return await this._cloudService.deleteUserInstance(connectedUser.facilityUserId, instanceId);
 
     } catch (error) {
       this.handleAPIResponseError(error);
@@ -318,7 +318,7 @@ export class AccountInstanceController extends BaseController {
       }
     }
   })
-  async deleteInstanceMember(@param.path.number('instanceId') instanceId: number, @param.path.number('memberId') memberId: number) {
+  async deleteInstanceMember(@param.path.number('instanceId') instanceId: number, @param.path.number('memberId') memberId: number): Promise<boolean> {
     try {
       const connectedUser = await this._accountService.getConnectedUser(this._request);
       return await this._cloudService.deleteUserInstanceMember(connectedUser.facilityUserId, instanceId, memberId);
