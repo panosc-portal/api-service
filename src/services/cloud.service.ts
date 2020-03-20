@@ -1,8 +1,15 @@
 import { bind, BindingScope } from '@loopback/core';
 import Axios, { AxiosInstance } from 'axios';
 import { APPLICATION_CONFIG } from '../application-config';
-import { InstanceDto, InstanceCreatorDto, InstanceUpdatorDto, InstanceAuthorisationDto, InstanceMember, InstanceMemberCreatorDto, InstanceMemberUpdatorDto, CloudInstanceState, CloudInstanceNetwork } from '../models/cloud-service';
+import { InstanceDto, InstanceCreatorDto, InstanceUpdatorDto, InstanceAuthorisationDto, InstanceMember, InstanceMemberCreatorDto, InstanceMemberUpdatorDto, CloudInstanceState, CloudInstanceNetwork, CloudInstanceCommand } from '../models/cloud-service';
 
+
+export class CloudServiceResponseError extends Error {
+  isCloudServiceResponseError = true;
+  constructor(message: string, public code: number) {
+    super(message);
+  }
+}
 
 @bind({ scope: BindingScope.SINGLETON })
 export class CloudService {
@@ -18,6 +25,10 @@ export class CloudService {
       }
     });
 
+    // Add interceptor to encapsulate cloud service response errors
+    this._axiosInstance.interceptors.response.use((response) => response, (error) => {
+      return Promise.reject(new CloudServiceResponseError(error.response.statusText, error.response.status));
+    });
   }
 
   //=== Instances objects
@@ -63,8 +74,8 @@ export class CloudService {
     return res.data;
   }
 
-  async executeUserInstanceAction(userId: number, instanceId: number): Promise<InstanceDto> {
-    const res = await this._axiosInstance.get(`users/${userId}/instances/${instanceId}/actions`);
+  async executeUserInstanceAction(userId: number, instanceId: number, command: CloudInstanceCommand): Promise<InstanceDto> {
+    const res = await this._axiosInstance.post(`users/${userId}/instances/${instanceId}/actions`, command);
     return res.data;
   }
 

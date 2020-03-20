@@ -10,6 +10,12 @@ export class User {
   id: number;
 
   @property({
+    type: 'number',
+    required: true
+  })
+  facilityUserId: number;
+
+  @property({
     type: 'string',
     required: true
   })

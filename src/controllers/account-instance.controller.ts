@@ -1,7 +1,7 @@
-import { del, get, getModelSchemaRef, param, post, put, requestBody, RestBindings, Request } from '@loopback/rest';
+import { del, get, getModelSchemaRef, param, post, put, requestBody, RestBindings, Request, HttpErrors } from '@loopback/rest';
 import { inject } from '@loopback/context';
 import { AccountService, CloudService } from '../services';
-import { InstanceDto, InstanceCreatorDto, InstanceAuthorisationDto, InstanceMember, InstanceMemberCreatorDto, InstanceMemberUpdatorDto, CloudInstanceCommand, CloudInstanceState, CloudInstanceNetwork, InstanceUpdatorDto } from '../models/cloud-service';
+import { InstanceDto, InstanceCreatorDto, InstanceAuthorisationDto, InstanceMember, InstanceMemberCreatorDto, InstanceMemberUpdatorDto, CloudInstanceCommand, CloudInstanceState, CloudInstanceNetwork, InstanceUpdatorDto, CloudInstanceAccount } from '../models/cloud-service';
 import { BaseController } from './base.controller';
 
 
@@ -50,9 +50,19 @@ export class AccountInstanceController extends BaseController {
       }
     }
   })
-  async getInstance(instanceId: number): Promise<InstanceDto> {
-    const connectedUser = await this._accountService.getConnectedUser(this._request);
-    return await this._cloudService.getUserInstance(connectedUser.id, instanceId);;
+  async getInstance(@param.path.number('instanceId') instanceId: number): Promise<InstanceDto> {
+    try {
+      const connectedUser = await this._accountService.getConnectedUser(this._request);
+      return await this._cloudService.getUserInstance(connectedUser.id, instanceId);;
+
+    } catch (error) {
+      if (error.isCloudServiceResponseError) {
+        this.handleCloudServiceResponseError(error);
+
+      } else {
+        throw new HttpErrors.InternalServerError(error.message);
+      }
+    }
   }
 
 
@@ -69,8 +79,20 @@ export class AccountInstanceController extends BaseController {
       }
     }
   })
-  async createInstance(instanceCreatorDto: InstanceCreatorDto): Promise<InstanceDto> {
+  async createInstance(@requestBody() instanceCreatorDto: InstanceCreatorDto): Promise<InstanceDto> {
     const connectedUser = await this._accountService.getConnectedUser(this._request);
+
+    // Create an account using details from the account service
+    const account = new CloudInstanceAccount({
+      userId: connectedUser.facilityUserId,
+      username: connectedUser.username,
+      uid: connectedUser.uid,
+      gid: connectedUser.gid,
+      email: connectedUser.email,
+      homePath: connectedUser.homePath
+    });
+    instanceCreatorDto.account = account;
+
     return this._cloudService.createUserInstance(connectedUser.id, instanceCreatorDto);
   }
 
@@ -88,7 +110,7 @@ export class AccountInstanceController extends BaseController {
       }
     }
   })
-  async updateInstance(instanceId: number, instanceUpdatorDto: InstanceUpdatorDto): Promise<InstanceDto> {
+  async updateInstance(@param.path.number('instanceId') instanceId: number, @requestBody() instanceUpdatorDto: InstanceUpdatorDto): Promise<InstanceDto> {
     const connectedUser = await this._accountService.getConnectedUser(this._request);
     return this._cloudService.updateUserInstance(connectedUser.id, instanceId, instanceUpdatorDto);
   }
@@ -102,7 +124,7 @@ export class AccountInstanceController extends BaseController {
       }
     }
   })
-  async deleteInstance(instanceId: number) {
+  async deleteInstance(@param.path.number('instanceId') instanceId: number) {
     const connectedUser = await this._accountService.getConnectedUser(this._request);
     this._cloudService.deleteUserInstance(connectedUser.id, instanceId);
   }
@@ -158,7 +180,7 @@ export class AccountInstanceController extends BaseController {
   })
   async postInstanceAction(@param.path.number('instanceId') instanceId: number, @requestBody() command: CloudInstanceCommand): Promise<InstanceDto> {
     const connectedUser = await this._accountService.getConnectedUser(this._request);
-    return this._cloudService.executeUserInstanceAction(connectedUser.id, instanceId);
+    return this._cloudService.executeUserInstanceAction(connectedUser.id, instanceId, command);
 
   }
 
