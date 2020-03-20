@@ -1,7 +1,7 @@
 import { bind, BindingScope } from '@loopback/core';
 import Axios, { AxiosInstance } from 'axios';
 import { APPLICATION_CONFIG } from '../application-config';
-import { InstanceDto, InstanceCreatorDto, InstanceUpdatorDto, InstanceAuthorisationDto, InstanceMember, InstanceMemberCreatorDto, InstanceMemberUpdatorDto, CloudInstanceState, CloudInstanceNetwork, CloudInstanceCommand } from '../models/cloud-service';
+import { InstanceDto, InstanceCreatorDto, InstanceUpdatorDto, InstanceAuthorisationDto, InstanceMember, InstanceMemberCreatorDto, InstanceMemberUpdatorDto, CloudInstanceState, CloudInstanceNetwork, CloudInstanceCommand, PlanDto } from '../models/cloud-service';
 
 
 export class CloudServiceResponseError extends Error {
@@ -27,7 +27,13 @@ export class CloudService {
 
     // Add interceptor to encapsulate cloud service response errors
     this._axiosInstance.interceptors.response.use((response) => response, (error) => {
-      return Promise.reject(new CloudServiceResponseError(error.response.statusText, error.response.status));
+      let responseErrorMessage = null;
+      if (error.response.data && error.response.data.error) {
+        responseErrorMessage = error.response.data.error.message;
+      }
+      const errorMessage = error.response.statusText + (responseErrorMessage ? ': ' + responseErrorMessage : '');
+
+      return Promise.reject(new CloudServiceResponseError(errorMessage, error.response.status));
     });
   }
 
@@ -44,12 +50,12 @@ export class CloudService {
   // (mais jamais en résultat pour que ça colle avec swagger)
 
   async createUserInstance(userId: number, instanceCreator: InstanceCreatorDto): Promise<InstanceDto> {
-    const res = await this._axiosInstance.post(`users/${userId}/instances`, InstanceCreatorDto);
+    const res = await this._axiosInstance.post(`users/${userId}/instances`, instanceCreator);
     return res.data;
   }
 
   async updateUserInstance(userId: number, instanceId: number, instanceUpdatorDto: InstanceUpdatorDto): Promise<InstanceDto> {
-    const res = await this._axiosInstance.post(`users/${userId}/instances/${instanceId}`, InstanceUpdatorDto);
+    const res = await this._axiosInstance.post(`users/${userId}/instances/${instanceId}`, instanceUpdatorDto);
     return res.data;
   }
 
@@ -79,8 +85,8 @@ export class CloudService {
     return res.data;
   }
 
-  async validateUserInstanceToken(userId: number, instanceId: number, token: string): Promise<InstanceAuthorisationDto> {
-    const res = await this._axiosInstance.post(`users/${userId}/instances/${instanceId}/token`, token);
+  async createUserInstanceToken(userId: number, instanceId: number): Promise<InstanceAuthorisationDto> {
+    const res = await this._axiosInstance.post(`users/${userId}/instances/${instanceId}/token`);
     return res.data;
   }
 
@@ -105,6 +111,16 @@ export class CloudService {
     const res = await this._axiosInstance.delete(`users/${userId}/instances/${instanceId}/members/${memberId}`);
   }
 
+  //=== Plan
 
+  async getPlans(): Promise<PlanDto[]> {
+    const res = await this._axiosInstance.get(`plans`);
+    return res.data;
+  }
+
+  async getPlan(planId: number): Promise<PlanDto> {
+    const res = await this._axiosInstance.get(`plans/${planId}`);
+    return res.data;
+  }
 
 }

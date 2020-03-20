@@ -22,6 +22,16 @@ export class BaseController {
     }
   }
 
+  handleAPIResponseError(error: Error) {
+    if (error.hasOwnProperty('isCloudServiceResponseError')) {
+      const cloudError = error as CloudServiceResponseError;
+      this.handleCloudServiceResponseError(cloudError);
+
+    } else {
+      throw new HttpErrors.InternalServerError(error.message);
+    }
+  }
+
   handleCloudServiceResponseError(error: CloudServiceResponseError) {
     if (error.code === 404) {
       throw new HttpErrors.NotFound(error.message);
