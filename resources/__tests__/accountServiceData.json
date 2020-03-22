@@ -22,11 +22,11 @@
       "homePath": "/home/user1",
       "active": true,
       "createdAt": "2014-01-01T23:28:56.782Z",
-      "role": {
+      "roles": [{
         "id": 1,
         "name": "admin",
         "description": "Administrator Role"
-      }
+      }]
     },
     {
       "id": 2,
@@ -47,11 +47,11 @@
       "homePath": "/home/user3",
       "active": true,
       "createdAt": "2018-07-01T23:28:56.782Z",
-      "role": {
+      "roles": [{
         "id": 2,
         "name": "user",
         "description": "Standard User"
-      }
+      }]
     }
   ]
 }

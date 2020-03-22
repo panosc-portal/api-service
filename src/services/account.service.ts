@@ -3,6 +3,7 @@ import { HttpErrors, Request } from '@loopback/rest';
 import Axios, { AxiosInstance } from 'axios';
 import { APPLICATION_CONFIG } from '../application-config';
 import { User } from '../models/account-service';
+import { APIResponseError } from '../utils';
 
 @bind({ scope: BindingScope.SINGLETON })
 export class AccountService {
@@ -19,6 +20,16 @@ export class AccountService {
       }
     });
 
+    // Add interceptor to encapsulate account service response errors
+    this._axiosInstance.interceptors.response.use((response) => response, (error) => {
+      let responseErrorMessage = null;
+      if (error.response.data && error.response.data.error) {
+        responseErrorMessage = error.response.data.error.message;
+      }
+      const errorMessage = error.response.statusText + (responseErrorMessage ? ': ' + responseErrorMessage : '');
+
+      return Promise.reject(new APIResponseError(errorMessage, error.response.status));
+    });
   }
 
   //=== Connected User and Role
@@ -42,11 +53,7 @@ export class AccountService {
   async requiredRole(request: Request, roleName: string): Promise<User> {
     const connectedUser = await this.getConnectedUser(request);
     if (roleName == 'user') return; //Anyone is User => no role check required
-    let connectedUserRoleName: string = 'user';
-    if (connectedUser.role) {
-      connectedUserRoleName = connectedUser.role.name;
-    }
-    if (connectedUserRoleName != roleName) {
+    if (connectedUser.roles == null || connectedUser.roles.find(role => role.name === roleName) == null) {
       throw new HttpErrors[403](`The connected required role is ${roleName}`);
     }
     return connectedUser;
@@ -57,8 +64,8 @@ export class AccountService {
   }
 
   isAdmin(user: User): boolean {
-    if (!user.role) return false;
-    return user.role.name == 'admin';
+    if (!user.roles) return false;
+    return user.roles.find(role => role.name === 'admin') != null;
   }
 
 

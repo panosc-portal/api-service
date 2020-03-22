@@ -47,9 +47,10 @@ export class User {
   active: boolean;
 
   @property({
-    type: Role
+    type: 'array',
+    itemType: Role
   })
-  role: Role;
+  roles: Role[];
 
   constructor(data?: Partial<User>) {
     Object.assign(this, data);

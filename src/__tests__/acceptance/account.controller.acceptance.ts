@@ -42,7 +42,7 @@ describe('AccountController', () => {
     const res = await client.get('/api/v1/account').set({ 'access_token': '1' }).expect(200);
 
     const user = res.body as User;
-    expect(user.role.name).to.equal('admin');
+    expect(user.roles[0].name).to.equal('admin');
   });
 
 

@@ -2,14 +2,7 @@ import { bind, BindingScope } from '@loopback/core';
 import Axios, { AxiosInstance } from 'axios';
 import { APPLICATION_CONFIG } from '../application-config';
 import { InstanceDto, InstanceCreatorDto, InstanceUpdatorDto, InstanceAuthorisationDto, InstanceMember, InstanceMemberCreatorDto, InstanceMemberUpdatorDto, CloudInstanceState, CloudInstanceNetwork, CloudInstanceCommand, PlanDto } from '../models/cloud-service';
-
-
-export class CloudServiceResponseError extends Error {
-  isCloudServiceResponseError = true;
-  constructor(message: string, public code: number) {
-    super(message);
-  }
-}
+import { APIResponseError } from '../utils';
 
 @bind({ scope: BindingScope.SINGLETON })
 export class CloudService {
@@ -33,7 +26,7 @@ export class CloudService {
       }
       const errorMessage = error.response.statusText + (responseErrorMessage ? ': ' + responseErrorMessage : '');
 
-      return Promise.reject(new CloudServiceResponseError(errorMessage, error.response.status));
+      return Promise.reject(new APIResponseError(errorMessage, error.response.status));
     });
   }
 

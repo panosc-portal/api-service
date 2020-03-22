@@ -1,5 +1,5 @@
 import { HttpErrors } from '@loopback/rest';
-import { CloudServiceResponseError } from '../services';
+import { APIResponseError } from '../utils';
 
 export class BaseController {
   constructor() { }
@@ -23,16 +23,15 @@ export class BaseController {
   }
 
   handleAPIResponseError(error: Error) {
-    if (error.hasOwnProperty('isCloudServiceResponseError')) {
-      const cloudError = error as CloudServiceResponseError;
-      this.handleCloudServiceResponseError(cloudError);
+    if (error instanceof APIResponseError) {
+      this.handleCloudServiceResponseError(error as APIResponseError);
 
     } else {
       throw new HttpErrors.InternalServerError(error.message);
     }
   }
 
-  handleCloudServiceResponseError(error: CloudServiceResponseError) {
+  handleCloudServiceResponseError(error: APIResponseError) {
     if (error.code === 404) {
       throw new HttpErrors.NotFound(error.message);
 
