@@ -1,12 +1,12 @@
 import express from 'express';
 import { lifeCycleObserver } from '@loopback/core';
-import { User, Role } from "../../models/account-service";
+import { Account, Role } from "../../models/account-service";
 import * as fs from 'fs';
 
 export interface AccountServiceMockServerData {
   port: number;
   roles: Role[];
-  users: User[];
+  accounts: Account[];
 }
 
 @lifeCycleObserver('server')
@@ -15,7 +15,7 @@ export class AccountServiceMockServer {
 
   port: number;
   roles: Role[] = [];
-  users: User[] = [];
+  accounts: Account[] = [];
 
   constructor() {
   }
@@ -29,7 +29,7 @@ export class AccountServiceMockServer {
       const accountServiceData = JSON.parse(rawAccountServiceData) as AccountServiceMockServerData;
       this.port = accountServiceData.port;
       this.roles = accountServiceData.roles;
-      this.users = accountServiceData.users;
+      this.accounts = accountServiceData.accounts;
 
       const app = express();
       app.use(express.json());
@@ -37,30 +37,30 @@ export class AccountServiceMockServer {
 
 
       app.get('/api/v1/me', (req, res) => {
-        //console.log("/api/v1/users");
+        //console.log("/api/v1/accounts");
         if (!req.header('access_token')) {
           res.status(403).send("Missing access token");
           return;
         }
         const access_token = req.header('access_token');
-        let connectedUserId: number = 1;
+        let connectedUserAccountId: number = 1;
         if (!isNaN(Number(access_token))) {
-          connectedUserId = Number(access_token);
+          connectedUserAccountId = Number(access_token);
         }
 
-        const user = this.users.find(aUser => aUser.id === connectedUserId);
-        res.status(200).send(user);
+        const account = this.accounts.find(aAccount => aAccount.id === connectedUserAccountId);
+        res.status(200).send(account);
       });
 
-      app.get('/api/v1/users', (req, res) => {
-        res.status(200).send(this.users);
+      app.get('/api/v1/accounts', (req, res) => {
+        res.status(200).send(this.accounts);
       });
 
-      app.get('/api/v1/users/:userId', (req, res) => {
-        const userId = +req.params.userId;
-        const user = this.users.find(aUser => aUser.id === userId);
-        if (user != null) {
-          res.status(200).send(user);
+      app.get('/api/v1/accounts/:accountId', (req, res) => {
+        const accountId = +req.params.accountId;
+        const account = this.accounts.find(aAccount => aAccount.id === accountId);
+        if (account != null) {
+          res.status(200).send(account);
         } else {
           res.status(404).send();
         }

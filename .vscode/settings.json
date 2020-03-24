@@ -1,5 +1,5 @@
 {
-  "editor.rulers": [80],
+  // "editor.rulers": [80],
   "editor.tabCompletion": "on",
   "editor.tabSize": 2,
   "editor.trimAutoWhitespace": true,
@@ -10,13 +10,12 @@
     "**/.hg": true,
     "**/.svn": true,
     "**/CVS": true,
-    "dist": true,
   },
   "files.insertFinalNewline": true,
   "files.trimTrailingWhitespace": true,
 
   "typescript.tsdk": "./node_modules/typescript/lib",
-  "eslint.run": "onSave",
+  // "eslint.run": "onSave",
   "eslint.nodePath": "./node_modules",
   "eslint.validate": [
     "javascript",

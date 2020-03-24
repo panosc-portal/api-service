@@ -4,9 +4,9 @@ import { setupApplication } from '../helpers/application.helper';
 import { AccountServiceMockServer } from '../mock/account-service-mock.server';
 import { CloudServiceMockServer } from '../mock/cloud-service-mock.server';
 
-import { User } from '../../models/account-service';
+import { Account } from '../../models/account-service';
 
-describe('UserController', () => {
+describe('AccountAdminController', () => {
   let app: ApiServiceApplication;
   let client: Client;
   let accountServiceServer: AccountServiceMockServer;
@@ -33,14 +33,14 @@ describe('UserController', () => {
   });
 
 
-  it('pemission denied on GET /api/v1/users with a no admin user', async () => {
-    const res = await client.get('/api/v1/users').set({ 'access_token': '2' }).expect(403);
+  it('pemission denied on GET /api/v1/accounts with a no admin account', async () => {
+    const res = await client.get('/api/v1/accounts').set({ 'access_token': '2' }).expect(403);
   });
 
-  it('invokes GET /api/v1/users with an admin user', async () => {
-    const res = await client.get('/api/v1/users').set({ 'access_token': '1' }).expect(200);
-    const users = res.body as User[];
-    expect(users.length).to.equal(3);
+  it('invokes GET /api/v1/accounts with an admin account', async () => {
+    const res = await client.get('/api/v1/accounts').set({ 'access_token': '1' }).expect(200);
+    const accounts = res.body as Account[];
+    expect(accounts.length).to.equal(3);
   });
 
 });

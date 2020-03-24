@@ -2,7 +2,7 @@ import { bind, BindingScope } from '@loopback/core';
 import { HttpErrors, Request } from '@loopback/rest';
 import Axios, { AxiosInstance } from 'axios';
 import { APPLICATION_CONFIG } from '../application-config';
-import { User } from '../models/account-service';
+import { Account } from '../models/account-service';
 import { APIResponseError } from '../utils';
 
 @bind({ scope: BindingScope.SINGLETON })
@@ -32,10 +32,10 @@ export class AccountService {
     });
   }
 
-  //=== Connected User and Role
+  //=== Connected Account and Role
 
-  // Return the connected user for convenience
-  async getConnectedUser(request: Request): Promise<User> {
+  // Return the connected account for convenience
+  async getConectedUserAccount(request: Request): Promise<Account> {
     if (!request.headers.access_token) {
       throw new HttpErrors[403](`The user is not connected`);
     }
@@ -50,65 +50,62 @@ export class AccountService {
   }
 
 
-  async requiredRole(request: Request, roleName: string): Promise<User> {
-    const connectedUser = await this.getConnectedUser(request);
-    if (roleName == 'user') return; //Anyone is User => no role check required
-    if (connectedUser.roles == null || connectedUser.roles.find(role => role.name === roleName) == null) {
+  async requiredRole(request: Request, roleName: string): Promise<Account> {
+    const connectedUserAccount = await this.getConectedUserAccount(request);
+    if (roleName == 'user') return; //Anyone is user => no role check required
+    if (connectedUserAccount.roles == null || connectedUserAccount.roles.find(role => role.name === roleName) == null) {
       throw new HttpErrors[403](`The connected required role is ${roleName}`);
     }
-    return connectedUser;
+    return connectedUserAccount;
   }
 
-  async requireAdminRole(request: Request): Promise<User> {
+  async requireAdminRole(request: Request): Promise<Account> {
     return this.requiredRole(request, 'admin');
   }
 
-  isAdmin(user: User): boolean {
-    if (!user.roles) return false;
-    return user.roles.find(role => role.name === 'admin') != null;
+  isAdmin(account: Account): boolean {
+    if (!account.roles) return false;
+    return account.roles.find(role => role.name === 'admin') != null;
   }
 
 
-  //=== Users object
+  //=== Accounts object
 
-  async getUsers(): Promise<User[]> {
-    const res = await this._axiosInstance.get('users');
+  async getAccounts(): Promise<Account[]> {
+    const res = await this._axiosInstance.get('accounts');
     return res.data;
   }
 
-  async getUser(id: number): Promise<User> {
-    const res = await this._axiosInstance.get(`users/${id}`);
+  async getAccount(id: number): Promise<Account> {
+    const res = await this._axiosInstance.get(`accounts/${id}`);
     return res.data;
   }
 
-  async createUser(userCreatorDto: Object): Promise<User> {
-    const res = await this._axiosInstance.post('users', userCreatorDto);
+  async createAccount(accountCreatorDto: Object): Promise<Account> {
+    const res = await this._axiosInstance.post('accounts', accountCreatorDto);
     return res.data;
   }
 
-  async updateUser(id: number, userUpdatorDto: Object): Promise<User> {
-    const res = await this._axiosInstance.put(`users/${id}`, userUpdatorDto);
+  async updateAccount(id: number, accountUpdatorDto: Object): Promise<Account> {
+    const res = await this._axiosInstance.put(`accounts/${id}`, accountUpdatorDto);
     return res.data;
   }
 
-  async deleteUser(id: Number) {
-    this._axiosInstance.delete(`users/${id}`);
+  async deleteAccount(id: Number): Promise<boolean> {
+    const res = await this._axiosInstance.delete(`accounts/${id}`);
+    return res.data
   }
 
-  async deleteUsers() {
-    this._axiosInstance.delete('users');
-  }
+  //=== Accounts roles
 
-
-  //=== Users roles
-
-  async addUserRole(userId: number, roleId: number): Promise<User> {
-    const res = await this._axiosInstance.post(`users/${userId}/roles/${roleId}`);
+  async addAccountRole(accountId: number, roleId: number): Promise<Account> {
+    const res = await this._axiosInstance.post(`accounts/${accountId}/roles/${roleId}`);
     return res.data;
   }
 
-  async deleteUserRole(userId: number, roleId: number) {
-    const res = await this._axiosInstance.delete(`users/${userId}/roles/${roleId}`);
+  async deleteAccountRole(accountId: number, roleId: number): Promise<boolean> {
+    const res = await this._axiosInstance.delete(`accounts/${accountId}/roles/${roleId}`);
+    return res.data;
   }
 
 

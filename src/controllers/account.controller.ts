@@ -1,7 +1,7 @@
 import { del, get, getModelSchemaRef, RestBindings, Request } from '@loopback/rest';
 import { inject } from '@loopback/context';
 import { AccountService, CloudService } from '../services';
-import { User } from '../models/account-service';
+import { Account } from '../models/account-service';
 import { BaseController } from './base.controller';
 
 
@@ -16,26 +16,26 @@ export class AccountController extends BaseController {
 
 
   @get('/account', {
-    summary: 'Gets the current connected user',
+    summary: 'Gets the account of the current connected user',
     responses: {
       '200': {
         description: 'Ok',
         content: {
           'application/json': {
-            schema: { type: 'array', items: getModelSchemaRef(User) }
+            schema: { type: 'array', items: getModelSchemaRef(Account) }
           }
         }
       }
     }
   })
-  async getAccount(): Promise<User> {
-    const connectedUser = await this._accountService.getConnectedUser(this._request);
-    return connectedUser;
+  async getAccount(): Promise<Account> {
+    const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+    return connectedUserAccount;
   }
 
 
   @del('/account', {
-    summary: 'Delete the current connected user',
+    summary: 'Delete the account of the current connected user',
     responses: {
       '204': {
         description: 'Ok'
@@ -43,8 +43,8 @@ export class AccountController extends BaseController {
     }
   })
   async deleteAccount() {
-    const connectedUser = await this._accountService.getConnectedUser(this._request);
-    this._accountService.deleteUser(connectedUser.id);
+    const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+    this._accountService.deleteAccount(connectedUserAccount.id);
   }
 
 

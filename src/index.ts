@@ -3,6 +3,7 @@ import { ApplicationConfig } from '@loopback/core';
 import * as dotenv from 'dotenv';
 dotenv.config();
 import { APPLICATION_CONFIG } from './application-config';
+import { logger } from './utils';
 
 
 
@@ -19,8 +20,7 @@ export async function main(options: ApplicationConfig = {}) {
   await app.start();
 
   const url = app.restServer.url;
-  console.log(`Server is running at ${url}`);
-  console.log(`Try ${url}/ping`);
+  logger.info(`Server is running at ${url}`);
 
   return app;
 

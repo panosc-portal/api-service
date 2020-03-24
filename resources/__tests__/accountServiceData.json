@@ -9,17 +9,17 @@
     {
       "id": 2,
       "name": "user",
-      "description": "Standard User"
+      "description": "Standard Account"
     }
   ],
-  "users": [
+  "accounts": [
     {
       "id": 1,
-      "username": "User1 Admin",
+      "username": "Account1 Admin",
       "uid": 101,
       "gid": 201,
-      "email": "user1@foo.bar",
-      "homePath": "/home/user1",
+      "email": "account1@foo.bar",
+      "homePath": "/home/account1",
       "active": true,
       "createdAt": "2014-01-01T23:28:56.782Z",
       "roles": [{
@@ -30,27 +30,27 @@
     },
     {
       "id": 2,
-      "username": "User2 has no Role (so User)",
+      "username": "Account2 has no Role (so Account)",
       "uid": 102,
       "gid": 202,
-      "email": "user3@foo.bar",
-      "homePath": "/home/user2",
+      "email": "account3@foo.bar",
+      "homePath": "/home/account2",
       "active": true,
       "createdAt": "2018-05-01T23:28:56.782Z"
     },
     {
       "id": 3,
-      "username": "User3 Role User",
+      "username": "Account3 Role Account",
       "uid": 103,
       "gid": 203,
-      "email": "user3@foo.bar",
-      "homePath": "/home/user3",
+      "email": "account3@foo.bar",
+      "homePath": "/home/account3",
       "active": true,
       "createdAt": "2018-07-01T23:28:56.782Z",
       "roles": [{
         "id": 2,
-        "name": "user",
-        "description": "Standard User"
+        "name": "account",
+        "description": "Standard Account"
       }]
     }
   ]

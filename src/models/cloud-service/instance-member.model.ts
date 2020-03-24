@@ -1,6 +1,6 @@
 import { model, property } from '@loopback/repository';
-import { User } from '../account-service';
 import { InstanceMemberRole } from './';
+import { User } from './user.model';
 
 @model()
 export class InstanceMember {

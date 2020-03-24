@@ -21,6 +21,7 @@
         "API_SERVICE_CLOUD_SERVICE_PORT": "4010"
       },
       "preLaunchTask": "tsc: build - tsconfig.json",
+      "console": "integratedTerminal",
       "outFiles": [
         "${workspaceFolder}/dist/**/*.js"
       ]

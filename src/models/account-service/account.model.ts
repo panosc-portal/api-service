@@ -2,7 +2,7 @@ import { model, property } from '@loopback/repository';
 import { Role } from './role.model';
 
 @model()
-export class User {
+export class Account {
   @property({
     type: 'number',
     required: true
@@ -13,7 +13,7 @@ export class User {
     type: 'number',
     required: true
   })
-  facilityUserId: number;
+  userId: number;
 
   @property({
     type: 'string',
@@ -52,7 +52,7 @@ export class User {
   })
   roles: Role[];
 
-  constructor(data?: Partial<User>) {
+  constructor(data?: Partial<Account>) {
     Object.assign(this, data);
   }
 

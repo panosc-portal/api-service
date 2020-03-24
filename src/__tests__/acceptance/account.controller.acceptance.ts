@@ -4,7 +4,7 @@ import { setupApplication } from '../helpers/application.helper';
 import { AccountServiceMockServer } from '../mock/account-service-mock.server';
 import { CloudServiceMockServer } from '../mock/cloud-service-mock.server';
 
-import { User } from '../../models/account-service';
+import { Account } from '../../models/account-service';
 
 describe('AccountController', () => {
   let app: ApiServiceApplication;
@@ -38,11 +38,11 @@ describe('AccountController', () => {
 
   });
 
-  it('invokes GET /api/v1/account with the user 1 token', async () => {
+  it('invokes GET /api/v1/account with the account 1 token', async () => {
     const res = await client.get('/api/v1/account').set({ 'access_token': '1' }).expect(200);
 
-    const user = res.body as User;
-    expect(user.roles[0].name).to.equal('admin');
+    const account = res.body as Account;
+    expect(account.roles[0].name).to.equal('admin');
   });
 
 

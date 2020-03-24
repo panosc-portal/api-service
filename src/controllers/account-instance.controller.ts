@@ -33,8 +33,8 @@ export class AccountInstanceController extends BaseController {
   })
   async getInstances(): Promise<InstanceDto[]> {
     try {
-      const connectedUser = await this._accountService.getConnectedUser(this._request);
-      return await this._cloudService.getUserInstances(connectedUser.facilityUserId);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      return await this._cloudService.getUserInstances(connectedUserAccount.userId);
 
     } catch (error) {
       this.handleAPIResponseError(error);
@@ -57,8 +57,8 @@ export class AccountInstanceController extends BaseController {
   })
   async getInstance(@param.path.number('instanceId') instanceId: number): Promise<InstanceDto> {
     try {
-      const connectedUser = await this._accountService.getConnectedUser(this._request);
-      return await this._cloudService.getUserInstance(connectedUser.facilityUserId, instanceId);;
+      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      return await this._cloudService.getUserInstance(connectedUserAccount.userId, instanceId);;
 
     } catch (error) {
       this.handleAPIResponseError(error);
@@ -81,20 +81,20 @@ export class AccountInstanceController extends BaseController {
   })
   async createInstance(@requestBody() instanceCreatorDto: InstanceCreatorDto): Promise<InstanceDto> {
     try {
-      const connectedUser = await this._accountService.getConnectedUser(this._request);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
 
       // Create an account using details from the account service
       const account = new CloudInstanceAccount({
-        userId: connectedUser.facilityUserId,
-        username: connectedUser.username,
-        uid: connectedUser.uid,
-        gid: connectedUser.gid,
-        email: connectedUser.email,
-        homePath: connectedUser.homePath
+        userId: connectedUserAccount.userId,
+        username: connectedUserAccount.username,
+        uid: connectedUserAccount.uid,
+        gid: connectedUserAccount.gid,
+        email: connectedUserAccount.email,
+        homePath: connectedUserAccount.homePath
       });
       instanceCreatorDto.account = account;
 
-      return await this._cloudService.createUserInstance(connectedUser.facilityUserId, instanceCreatorDto);
+      return await this._cloudService.createUserInstance(connectedUserAccount.userId, instanceCreatorDto);
 
     } catch (error) {
       this.handleAPIResponseError(error);
@@ -117,8 +117,8 @@ export class AccountInstanceController extends BaseController {
   })
   async updateInstance(@param.path.number('instanceId') instanceId: number, @requestBody() instanceUpdatorDto: InstanceUpdatorDto): Promise<InstanceDto> {
     try {
-      const connectedUser = await this._accountService.getConnectedUser(this._request);
-      return await this._cloudService.updateUserInstance(connectedUser.facilityUserId, instanceId, instanceUpdatorDto);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      return await this._cloudService.updateUserInstance(connectedUserAccount.userId, instanceId, instanceUpdatorDto);
 
     } catch (error) {
       this.handleAPIResponseError(error);
@@ -136,8 +136,8 @@ export class AccountInstanceController extends BaseController {
   })
   async deleteInstance(@param.path.number('instanceId') instanceId: number): Promise<boolean> {
     try {
-      const connectedUser = await this._accountService.getConnectedUser(this._request);
-      return await this._cloudService.deleteUserInstance(connectedUser.facilityUserId, instanceId);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      return await this._cloudService.deleteUserInstance(connectedUserAccount.userId, instanceId);
 
     } catch (error) {
       this.handleAPIResponseError(error);
@@ -162,8 +162,8 @@ export class AccountInstanceController extends BaseController {
   })
   async getInstanceState(@param.path.number('instanceId') instanceId: number): Promise<CloudInstanceState> {
     try {
-      const connectedUser = await this._accountService.getConnectedUser(this._request);
-      return await this._cloudService.getUserInstanceState(connectedUser.facilityUserId, instanceId);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      return await this._cloudService.getUserInstanceState(connectedUserAccount.userId, instanceId);
 
     } catch (error) {
       this.handleAPIResponseError(error);
@@ -186,8 +186,8 @@ export class AccountInstanceController extends BaseController {
   })
   async getInstanceNetwork(@param.path.number('instanceId') instanceId: number): Promise<CloudInstanceNetwork> {
     try {
-      const connectedUser = await this._accountService.getConnectedUser(this._request);
-      return await this._cloudService.getUserInstanceNetwork(connectedUser.facilityUserId, instanceId);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      return await this._cloudService.getUserInstanceNetwork(connectedUserAccount.userId, instanceId);
 
     } catch (error) {
       this.handleAPIResponseError(error);
@@ -205,8 +205,8 @@ export class AccountInstanceController extends BaseController {
   })
   async postInstanceAction(@param.path.number('instanceId') instanceId: number, @requestBody() command: CloudInstanceCommand): Promise<InstanceDto> {
     try {
-      const connectedUser = await this._accountService.getConnectedUser(this._request);
-      return await this._cloudService.executeUserInstanceAction(connectedUser.facilityUserId, instanceId, command);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      return await this._cloudService.executeUserInstanceAction(connectedUserAccount.userId, instanceId, command);
 
     } catch (error) {
       this.handleAPIResponseError(error);
@@ -229,8 +229,8 @@ export class AccountInstanceController extends BaseController {
   })
   async createInstanceToken(@param.path.number('instanceId') instanceId: number): Promise<InstanceAuthorisationDto> {
     try {
-      const connectedUser = await this._accountService.getConnectedUser(this._request);
-      return await this._cloudService.createUserInstanceToken(connectedUser.facilityUserId, instanceId);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      return await this._cloudService.createUserInstanceToken(connectedUserAccount.userId, instanceId);
 
     } catch (error) {
       this.handleAPIResponseError(error);
@@ -254,8 +254,8 @@ export class AccountInstanceController extends BaseController {
   })
   async getAllInstanceMembers(@param.path.number('instanceId') instanceId: number): Promise<InstanceMember[]> {
     try {
-      const connectedUser = await this._accountService.getConnectedUser(this._request);
-      return await this._cloudService.getAllUserInstanceMembers(connectedUser.facilityUserId, instanceId);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      return await this._cloudService.getAllUserInstanceMembers(connectedUserAccount.userId, instanceId);
 
     } catch (error) {
       this.handleAPIResponseError(error);
@@ -278,8 +278,8 @@ export class AccountInstanceController extends BaseController {
   })
   async createInstanceMember(@param.path.number('instanceId') instanceId: number, @requestBody() instanceMemberCreatorDto: InstanceMemberCreatorDto): Promise<InstanceMember> {
     try {
-      const connectedUser = await this._accountService.getConnectedUser(this._request);
-      return await this._cloudService.createUserInstanceMember(connectedUser.facilityUserId, instanceId, instanceMemberCreatorDto);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      return await this._cloudService.createUserInstanceMember(connectedUserAccount.userId, instanceId, instanceMemberCreatorDto);
 
     } catch (error) {
       this.handleAPIResponseError(error);
@@ -302,8 +302,8 @@ export class AccountInstanceController extends BaseController {
   })
   async updateInstanceMember(@param.path.number('instanceId') instanceId: number, @param.path.number('memberId') memberId: number, @requestBody() instanceMemberUpdatorDto: InstanceMemberUpdatorDto): Promise<InstanceMember> {
     try {
-      const connectedUser = await this._accountService.getConnectedUser(this._request);
-      return await this._cloudService.updateUserInstanceMember(connectedUser.facilityUserId, instanceId, memberId, instanceMemberUpdatorDto);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      return await this._cloudService.updateUserInstanceMember(connectedUserAccount.userId, instanceId, memberId, instanceMemberUpdatorDto);
 
     } catch (error) {
       this.handleAPIResponseError(error);
@@ -320,8 +320,8 @@ export class AccountInstanceController extends BaseController {
   })
   async deleteInstanceMember(@param.path.number('instanceId') instanceId: number, @param.path.number('memberId') memberId: number): Promise<boolean> {
     try {
-      const connectedUser = await this._accountService.getConnectedUser(this._request);
-      return await this._cloudService.deleteUserInstanceMember(connectedUser.facilityUserId, instanceId, memberId);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      return await this._cloudService.deleteUserInstanceMember(connectedUserAccount.userId, instanceId, memberId);
 
     } catch (error) {
       this.handleAPIResponseError(error);
