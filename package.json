@@ -30,7 +30,8 @@
     "start": "node -r source-map-support/register .",
     "start2": "node -r source-map-support/register index2",
     "debug": "nodemon -r source-map-support/register --inspect=0.0.0.0 .",
-    "prepublishOnly": "npm run test"
+    "prepublishOnly": "npm run test",
+    "preinstall": "npx npm-force-resolutions"
   },
   "repository": {
     "type": "git"
@@ -65,5 +66,8 @@
     "@types/node": "^10.17.14",
     "typescript": "~3.7.5",
     "nodemon": "^2.0.2"
+  },
+  "resolutions": {
+    "minimist": ">=1.2.2"
   }
 }
