@@ -17,6 +17,9 @@ export class AccountAdminController extends BaseController {
 
   @get('/accounts', {
     summary: 'Gets a list of accounts',
+    tags: [
+      'Account Admin'
+    ],
     responses: {
       '200': {
         description: 'Ok',
@@ -36,6 +39,9 @@ export class AccountAdminController extends BaseController {
 
   @get('/accounts/{id}', {
     summary: 'Gets an account',
+    tags: [
+      'Account Admin'
+    ],
     responses: {
       '200': {
         description: 'Ok',
@@ -59,6 +65,9 @@ export class AccountAdminController extends BaseController {
 
   @del('/accounts/{id}', {
     summary: 'Deletes an account',
+    tags: [
+      'Account Admin'
+    ],
     responses: {
       '200': {
         description: 'Ok'
@@ -75,6 +84,9 @@ export class AccountAdminController extends BaseController {
 
   @post('/accounts/{accountId}/roles/{roleId}', {
     summary: 'Adds a role to an account',
+    tags: [
+      'Account Admin'
+    ],
     responses: {
       '200': {
         description: 'Ok',
@@ -90,6 +102,9 @@ export class AccountAdminController extends BaseController {
 
   @del('/accounts/{accountId}/roles/{roleId}', {
     summary: 'Deletes the role from an account',
+    tags: [
+      'Account Admin'
+    ],
     responses: {
       '200': {
         description: 'Ok'

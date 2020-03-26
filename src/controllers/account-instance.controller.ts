@@ -20,12 +20,15 @@ export class AccountInstanceController extends BaseController {
 
   @get('/account/instances/', {
     summary: 'Get all instances of the current user',
+    tags: [
+      'Account Instance'
+    ],
     responses: {
       '200': {
         description: 'Ok',
         content: {
           'application/json': {
-            schema: { type: 'array', items: getModelSchemaRef(InstanceDto) }
+            schema: { type: 'array', items: getModelSchemaRef(InstanceDto, {title: 'Instance'}) }
           }
         }
       }
@@ -44,12 +47,15 @@ export class AccountInstanceController extends BaseController {
 
   @get('/account/instances/{instanceId}', {
     summary: 'Get an instance of the current user',
+    tags: [
+      'Account Instance'
+    ],
     responses: {
       '200': {
         description: 'Ok',
         content: {
           'application/json': {
-            schema: { type: 'array', items: getModelSchemaRef(InstanceDto) }
+            schema: { type: 'array', items: getModelSchemaRef(InstanceDto, {title: 'Instance'}) }
           }
         }
       }
@@ -68,12 +74,15 @@ export class AccountInstanceController extends BaseController {
 
   @post('/account/instances', {
     summary: 'Create a new instance for the current user',
+    tags: [
+      'Account Instance'
+    ],
     responses: {
       '200': {
         description: 'Ok',
         content: {
           'application/json': {
-            schema: { type: 'array', items: getModelSchemaRef(InstanceDto) }
+            schema: { type: 'array', items: getModelSchemaRef(InstanceDto, {title: 'Instance'}) }
           }
         }
       }
@@ -104,12 +113,15 @@ export class AccountInstanceController extends BaseController {
 
   @put('/account/instances/{instanceId}', {
     summary: 'Update an instance of the current user',
+    tags: [
+      'Account Instance'
+    ],
     responses: {
       '200': {
         description: 'Ok',
         content: {
           'application/json': {
-            schema: { type: 'array', items: getModelSchemaRef(InstanceDto) }
+            schema: { type: 'array', items: getModelSchemaRef(InstanceDto, {title: 'Instance'}) }
           }
         }
       }
@@ -128,6 +140,9 @@ export class AccountInstanceController extends BaseController {
 
   @del('/account/instances/{instanceId}', {
     summary: 'Delete an instance of the current user',
+    tags: [
+      'Account Instance'
+    ],
     responses: {
       '204': {
         description: 'Ok',
@@ -149,12 +164,15 @@ export class AccountInstanceController extends BaseController {
 
   @get('/account/instances/{instanceId}/state', {
     summary: 'Get the state of an instance of the current user',
+    tags: [
+      'Account Instance'
+    ],
     responses: {
       '200': {
         description: 'Ok',
         content: {
           'application/json': {
-            schema: getModelSchemaRef(CloudInstanceState)
+            schema: getModelSchemaRef(CloudInstanceState, {title: 'InstanceState'})
           }
         }
       }
@@ -173,12 +191,15 @@ export class AccountInstanceController extends BaseController {
 
   @get('/account/instances/{instanceId}/network', {
     summary: 'Get the network of an instance of the current user',
+    tags: [
+      'Account Instance'
+    ],
     responses: {
       '200': {
         description: 'Ok',
         content: {
           'application/json': {
-            schema: getModelSchemaRef(CloudInstanceNetwork)
+            schema: getModelSchemaRef(CloudInstanceNetwork, {title: 'InstanceNetwork'})
           }
         }
       }
@@ -197,6 +218,9 @@ export class AccountInstanceController extends BaseController {
 
   @post('/account/instances/{instanceId}/actions', {
     summary: 'Invoke an action for an instance of the current user',
+    tags: [
+      'Account Instance'
+    ],
     responses: {
       '201': {
         description: 'Created'
@@ -216,12 +240,15 @@ export class AccountInstanceController extends BaseController {
 
   @post('/account/instances/{instanceId}/token', {
     summary: 'Creates an authorisation token for an instance of the current user',
+    tags: [
+      'Account Instance'
+    ],
     responses: {
       '200': {
         description: 'Ok',
         content: {
           'application/json': {
-            schema: getModelSchemaRef(InstanceAuthorisationDto)
+            schema: getModelSchemaRef(InstanceAuthorisationDto, {title: 'InstanceAuthorisation'})
           }
         }
       }
@@ -241,6 +268,9 @@ export class AccountInstanceController extends BaseController {
 
   @get('/account/instances/{instanceId}/members', {
     summary: 'Get all members of an instance of the current user',
+    tags: [
+      'Account Instance'
+    ],
     responses: {
       '200': {
         description: 'Ok',
@@ -265,6 +295,9 @@ export class AccountInstanceController extends BaseController {
 
   @post('/account/instances/{instanceId}/members', {
     summary: 'Create a member for an instance of the current user',
+    tags: [
+      'Account Instance'
+    ],
     responses: {
       '201': {
         description: 'Created',
@@ -289,6 +322,9 @@ export class AccountInstanceController extends BaseController {
 
   @put('/account/instances/{instanceId}/members/{memberId}', {
     summary: 'Update a member of an instance of the current user',
+    tags: [
+      'Account Instance'
+    ],
     responses: {
       '200': {
         description: 'Ok',
@@ -312,6 +348,9 @@ export class AccountInstanceController extends BaseController {
 
   @del('/account/instances/{instanceId}/members/{memberId}', {
     summary: 'Delete a member of an instance of the current user',
+    tags: [
+      'Account Instance'
+    ],
     responses: {
       '200': {
         description: 'Ok'

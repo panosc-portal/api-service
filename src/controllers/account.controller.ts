@@ -17,6 +17,9 @@ export class AccountController extends BaseController {
 
   @get('/account', {
     summary: 'Gets the account of the current connected user',
+    tags: [
+      'User Account'
+    ],
     responses: {
       '200': {
         description: 'Ok',
@@ -36,6 +39,9 @@ export class AccountController extends BaseController {
 
   @del('/account', {
     summary: 'Delete the account of the current connected user',
+    tags: [
+      'User Account'
+    ],
     responses: {
       '204': {
         description: 'Ok'

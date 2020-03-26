@@ -17,12 +17,15 @@ export class PlanController extends BaseController {
 
   @get('/plans', {
     summary: 'Get a list of all plans',
+    tags: [
+      'Plan'
+    ],
     responses: {
       '200': {
         description: 'Ok',
         content: {
           'application/json': {
-            schema: { type: 'array', items: getModelSchemaRef(PlanDto) }
+            schema: { type: 'array', items: getModelSchemaRef(PlanDto, {title: 'Plan'}) }
           }
         }
       }
@@ -41,12 +44,15 @@ export class PlanController extends BaseController {
 
   @get('/plans/{planId}', {
     summary: 'Get a plan by a given identifier',
+    tags: [
+      'Plan'
+    ],
     responses: {
       '200': {
         description: 'Ok',
         content: {
           'application/json': {
-            schema: getModelSchemaRef(PlanDto)
+            schema: getModelSchemaRef(PlanDto, {title: 'Plan'})
           }
         }
       }
