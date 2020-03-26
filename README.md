@@ -1,4 +1,4 @@
-# api-service
+# API Service
 
 [![Actions Status](https://github.com/panosc-portal/api-service/workflows/Node.js%20CI/badge.svg)](https://github.com/panosc-portal/api-service/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
