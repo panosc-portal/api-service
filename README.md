@@ -24,5 +24,16 @@ npm start
 ```
 Access explorer at: http://localhost:3000/api/v1/explorer/
 
+### Environment variables
+
+The following environment variables are used to configure the API Service and can be set in a dotenv file:
+
+| Environment variable | Default value | Usage |
+| ---- | ---- | ---- |
+| API_SERVICE_ACCOUNT_SERVICE_HOST | | The host of the Account Service micro-service |
+| API_SERVICE_ACCOUNT_SERVICE_PORT | | The port of the Account Service micro-service |
+| API_SERVICE_CLOUD_SERVICE_HOST | | The host of the Cloud Service micro-service |
+| API_SERVICE_CLOUD_SERVICE_PORT | | The port of the Cloud Service micro-service |
+
 
 [![LoopBack](https://github.com/strongloop/loopback-next/raw/master/docs/site/imgs/branding/Powered-by-LoopBack-Badge-(blue)-@2x.png)](http://loopback.io/)
