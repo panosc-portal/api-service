@@ -64,3 +64,5 @@ typings/
 *.tsbuildinfo
 
 pgdata
+.vscode
+
