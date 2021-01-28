@@ -40,7 +40,7 @@ export class AccountService {
       throw new HttpErrors[403](`The user is not connected`);
     }
 
-    const res = await this._axiosInstance.get('me', {
+    const res = await this._axiosInstance.get('account', {
       headers: {
         'Content-Type': 'application/json',
         'access_token': request.headers.access_token
