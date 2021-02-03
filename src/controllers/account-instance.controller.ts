@@ -1,4 +1,4 @@
-import { del, get, getModelSchemaRef, param, post, put, requestBody, RestBindings, Request, HttpErrors } from '@loopback/rest';
+import { del, get, getModelSchemaRef, param, post, put, requestBody } from '@loopback/rest';
 import { inject } from '@loopback/context';
 import { AccountService, CloudService } from '../services';
 import { InstanceDto, InstanceCreatorDto, InstanceAuthorisationDto, InstanceMember, InstanceMemberCreatorDto, InstanceMemberUpdatorDto, CloudInstanceCommand, CloudInstanceState, CloudInstanceNetwork, InstanceUpdatorDto, CloudInstanceAccount } from '../models/cloud-service';
@@ -8,7 +8,6 @@ import { BaseController } from './base.controller';
 export class AccountInstanceController extends BaseController {
 
   constructor(
-    @inject(RestBindings.Http.REQUEST) private _request: Request,
     @inject('services.AccountService') private _accountService: AccountService,
     @inject('services.CloudService') private _cloudService: CloudService
   ) {
@@ -36,7 +35,7 @@ export class AccountInstanceController extends BaseController {
   })
   async getInstances(): Promise<InstanceDto[]> {
     try {
-      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount();
       return await this._cloudService.getUserInstances(connectedUserAccount.userId);
 
     } catch (error) {
@@ -63,7 +62,7 @@ export class AccountInstanceController extends BaseController {
   })
   async getInstance(@param.path.number('instanceId') instanceId: number): Promise<InstanceDto> {
     try {
-      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount();
       return await this._cloudService.getUserInstance(connectedUserAccount.userId, instanceId);;
 
     } catch (error) {
@@ -90,7 +89,7 @@ export class AccountInstanceController extends BaseController {
   })
   async createInstance(@requestBody() instanceCreatorDto: InstanceCreatorDto): Promise<InstanceDto> {
     try {
-      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount();
 
       // Create an account using details from the account service
       const account = new CloudInstanceAccount({
@@ -129,7 +128,7 @@ export class AccountInstanceController extends BaseController {
   })
   async updateInstance(@param.path.number('instanceId') instanceId: number, @requestBody() instanceUpdatorDto: InstanceUpdatorDto): Promise<InstanceDto> {
     try {
-      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount();
       return await this._cloudService.updateUserInstance(connectedUserAccount.userId, instanceId, instanceUpdatorDto);
 
     } catch (error) {
@@ -151,7 +150,7 @@ export class AccountInstanceController extends BaseController {
   })
   async deleteInstance(@param.path.number('instanceId') instanceId: number): Promise<boolean> {
     try {
-      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount();
       return await this._cloudService.deleteUserInstance(connectedUserAccount.userId, instanceId);
 
     } catch (error) {
@@ -180,7 +179,7 @@ export class AccountInstanceController extends BaseController {
   })
   async getInstanceState(@param.path.number('instanceId') instanceId: number): Promise<CloudInstanceState> {
     try {
-      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount();
       return await this._cloudService.getUserInstanceState(connectedUserAccount.userId, instanceId);
 
     } catch (error) {
@@ -207,7 +206,7 @@ export class AccountInstanceController extends BaseController {
   })
   async getInstanceNetwork(@param.path.number('instanceId') instanceId: number): Promise<CloudInstanceNetwork> {
     try {
-      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount();
       return await this._cloudService.getUserInstanceNetwork(connectedUserAccount.userId, instanceId);
 
     } catch (error) {
@@ -229,7 +228,7 @@ export class AccountInstanceController extends BaseController {
   })
   async postInstanceAction(@param.path.number('instanceId') instanceId: number, @requestBody() command: CloudInstanceCommand): Promise<InstanceDto> {
     try {
-      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount();
       return await this._cloudService.executeUserInstanceAction(connectedUserAccount.userId, instanceId, command);
 
     } catch (error) {
@@ -256,7 +255,7 @@ export class AccountInstanceController extends BaseController {
   })
   async createInstanceToken(@param.path.number('instanceId') instanceId: number): Promise<InstanceAuthorisationDto> {
     try {
-      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount();
       return await this._cloudService.createUserInstanceToken(connectedUserAccount.userId, instanceId);
 
     } catch (error) {
@@ -284,7 +283,7 @@ export class AccountInstanceController extends BaseController {
   })
   async getAllInstanceMembers(@param.path.number('instanceId') instanceId: number): Promise<InstanceMember[]> {
     try {
-      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount();
       return await this._cloudService.getAllUserInstanceMembers(connectedUserAccount.userId, instanceId);
 
     } catch (error) {
@@ -311,7 +310,7 @@ export class AccountInstanceController extends BaseController {
   })
   async createInstanceMember(@param.path.number('instanceId') instanceId: number, @requestBody() instanceMemberCreatorDto: InstanceMemberCreatorDto): Promise<InstanceMember> {
     try {
-      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount();
       return await this._cloudService.createUserInstanceMember(connectedUserAccount.userId, instanceId, instanceMemberCreatorDto);
 
     } catch (error) {
@@ -338,7 +337,7 @@ export class AccountInstanceController extends BaseController {
   })
   async updateInstanceMember(@param.path.number('instanceId') instanceId: number, @param.path.number('memberId') memberId: number, @requestBody() instanceMemberUpdatorDto: InstanceMemberUpdatorDto): Promise<InstanceMember> {
     try {
-      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount();
       return await this._cloudService.updateUserInstanceMember(connectedUserAccount.userId, instanceId, memberId, instanceMemberUpdatorDto);
 
     } catch (error) {
@@ -359,7 +358,7 @@ export class AccountInstanceController extends BaseController {
   })
   async deleteInstanceMember(@param.path.number('instanceId') instanceId: number, @param.path.number('memberId') memberId: number): Promise<boolean> {
     try {
-      const connectedUserAccount = await this._accountService.getConectedUserAccount(this._request);
+      const connectedUserAccount = await this._accountService.getConectedUserAccount();
       return await this._cloudService.deleteUserInstanceMember(connectedUserAccount.userId, instanceId, memberId);
 
     } catch (error) {

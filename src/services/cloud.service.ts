@@ -1,22 +1,17 @@
-import { bind, BindingScope } from '@loopback/core';
-import Axios, { AxiosInstance } from 'axios';
-import { APPLICATION_CONFIG } from '../application-config';
+import { bind, BindingScope, inject } from '@loopback/core';
+import { AxiosInstance } from 'axios';
 import { InstanceDto, InstanceCreatorDto, InstanceUpdatorDto, InstanceAuthorisationDto, InstanceMember, InstanceMemberCreatorDto, InstanceMemberUpdatorDto, CloudInstanceState, CloudInstanceNetwork, CloudInstanceCommand, PlanDto } from '../models/cloud-service';
 import { APIResponseError } from '../utils';
+import { PanoscCommonTsComponentBindings } from '@panosc-portal/panosc-common-ts';
 
-@bind({ scope: BindingScope.SINGLETON })
+@bind({ scope: BindingScope.CONTEXT })
 export class CloudService {
 
-  private _axiosInstance: AxiosInstance;
+  //private _axiosInstance: AxiosInstance;
 
-  constructor() {
-    this._axiosInstance = Axios.create({
-      baseURL: 'http://' + APPLICATION_CONFIG().cloudService.host + ':' + APPLICATION_CONFIG().cloudService.port + '/api/v1/',
-      responseType: 'json',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
+  constructor(@inject(PanoscCommonTsComponentBindings.GATEWAY_CLIENT) private _axiosInstance: AxiosInstance) {
+
+    this._axiosInstance.defaults.baseURL += "cloud-service/api/v1/";
 
     // Add interceptor to encapsulate cloud service response errors
     this._axiosInstance.interceptors.response.use((response) => response, (error) => {

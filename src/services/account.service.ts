@@ -1,57 +1,35 @@
-import { bind, BindingScope } from '@loopback/core';
+import { bind, BindingScope, inject } from '@loopback/core';
 import { HttpErrors, Request } from '@loopback/rest';
-import Axios, { AxiosInstance } from 'axios';
-import { APPLICATION_CONFIG } from '../application-config';
+import { AxiosInstance } from 'axios';
 import { Account } from '../models/account-service';
-import { APIResponseError } from '../utils';
+import { PanoscCommonTsComponentBindings } from '@panosc-portal/panosc-common-ts';
 
-@bind({ scope: BindingScope.SINGLETON })
+@bind({ scope: BindingScope.CONTEXT })
 export class AccountService {
 
-  private _axiosInstance: AxiosInstance;
-
-  constructor() {
-    //https://levelup.gitconnected.com/a-typescript-safe-api-82cc22c4f92d
-    this._axiosInstance = Axios.create({
-      baseURL: 'http://' + APPLICATION_CONFIG().accountService.host + ':' + APPLICATION_CONFIG().accountService.port + '/api/v1/',
-      responseType: 'json',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    // Add interceptor to encapsulate account service response errors
-    this._axiosInstance.interceptors.response.use((response) => response, (error) => {
-      let responseErrorMessage = null;
-      if (error.response.data && error.response.data.error) {
-        responseErrorMessage = error.response.data.error.message;
-      }
-      const errorMessage = error.response.statusText + (responseErrorMessage ? ': ' + responseErrorMessage : '');
-
-      return Promise.reject(new APIResponseError(errorMessage, error.response.status));
-    });
+  constructor(@inject(PanoscCommonTsComponentBindings.GATEWAY_CLIENT) private _axiosInstance: AxiosInstance) {
+    this._axiosInstance.defaults.baseURL += "account-service/api/v1/";
   }
 
   //=== Connected Account and Role
 
   // Return the connected account for convenience
-  async getConectedUserAccount(request: Request): Promise<Account> {
-    if (!request.headers.access_token) {
+  async getConectedUserAccount(): Promise<Account> {
+    if (!this._axiosInstance.defaults.headers.access_token) {
       throw new HttpErrors[403](`The user is not connected`);
     }
 
     const res = await this._axiosInstance.get('account', {
       headers: {
         'Content-Type': 'application/json',
-        'access_token': request.headers.access_token
       }
     });
     return res.data;
   }
 
 
-  async requiredRole(request: Request, roleName: string): Promise<Account> {
-    const connectedUserAccount = await this.getConectedUserAccount(request);
+  async requiredRole(roleName: string): Promise<Account> {
+    const connectedUserAccount = await this.getConectedUserAccount();
     if (roleName == 'user') return; //Anyone is user => no role check required
     if (connectedUserAccount.roles == null || connectedUserAccount.roles.find(role => role.name === roleName) == null) {
       throw new HttpErrors[403](`The connected required role is ${roleName}`);
@@ -59,8 +37,8 @@ export class AccountService {
     return connectedUserAccount;
   }
 
-  async requireAdminRole(request: Request): Promise<Account> {
-    return this.requiredRole(request, 'admin');
+  async requireAdminRole(): Promise<Account> {
+    return this.requiredRole('admin');
   }
 
   isAdmin(account: Account): boolean {

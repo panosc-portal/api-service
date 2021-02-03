@@ -9,12 +9,15 @@ import { RestApplication } from '@loopback/rest';
 import { ServiceMixin } from '@loopback/service-proxy';
 import path from 'path';
 import { MySequence } from './sequence';
+import { PanoscCommonTsComponent } from '@panosc-portal/panosc-common-ts';
 
 export class ApiServiceApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
 ) {
   constructor(options: ApplicationConfig = {}) {
     super(options);
+
+    this.component(PanoscCommonTsComponent);
 
     // Set up the custom sequence
     this.sequence(MySequence);

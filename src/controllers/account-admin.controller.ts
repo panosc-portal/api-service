@@ -1,4 +1,4 @@
-import { del, get, getModelSchemaRef, param, post, requestBody, RestBindings, Request } from '@loopback/rest';
+import { del, get, getModelSchemaRef, param, post } from '@loopback/rest';
 import { inject } from '@loopback/context';
 import { AccountService } from '../services';
 import { Account, Role } from '../models/account-service';
@@ -7,7 +7,6 @@ import { BaseController } from './base.controller';
 
 export class AccountAdminController extends BaseController {
   constructor(
-    @inject(RestBindings.Http.REQUEST) private _request: Request,
     @inject('services.AccountService') private _accountService: AccountService
   ) {
     super();
@@ -32,7 +31,7 @@ export class AccountAdminController extends BaseController {
     }
   })
   async getAccounts(): Promise<Account[]> {
-    await this._accountService.requireAdminRole(this._request);
+    await this._accountService.requireAdminRole();
     return this._accountService.getAccounts();
   }
 
@@ -50,7 +49,7 @@ export class AccountAdminController extends BaseController {
     }
   })
   async getAccount(@param.path.number('id') id: number): Promise<Account> {
-    await this._accountService.requireAdminRole(this._request);
+    await this._accountService.requireAdminRole();
     return this._accountService.getAccount(id);
     /*
     try {
@@ -75,7 +74,7 @@ export class AccountAdminController extends BaseController {
     }
   })
   async deleteAccount(@param.path.number('id') id: number): Promise<boolean> {
-    await this._accountService.requireAdminRole(this._request);
+    await this._accountService.requireAdminRole();
     return this._accountService.deleteAccount(id);
   }
 
@@ -95,7 +94,7 @@ export class AccountAdminController extends BaseController {
     }
   })
   async addAccountRole(@param.path.number('accountId') accountId: number, @param.path.number('roleId') roleId: number): Promise<Account> {
-    await this._accountService.requireAdminRole(this._request);
+    await this._accountService.requireAdminRole();
     return this._accountService.addAccountRole(accountId, roleId);
   }
 
@@ -112,7 +111,7 @@ export class AccountAdminController extends BaseController {
     }
   })
   async deleteAccountRole(@param.path.number('accountId') accountId: number, @param.path.string('roleId') roleId: number): Promise<boolean> {
-    await this._accountService.requireAdminRole(this._request);
+    await this._accountService.requireAdminRole();
     return this._accountService.deleteAccountRole(accountId, roleId);
   }
 
