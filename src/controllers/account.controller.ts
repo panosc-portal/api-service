@@ -35,22 +35,4 @@ export class AccountController extends BaseController {
     return connectedUserAccount;
   }
 
-
-  @del('/account', {
-    summary: 'Delete the account of the current connected user',
-    tags: [
-      'User Account'
-    ],
-    responses: {
-      '204': {
-        description: 'Ok'
-      }
-    }
-  })
-  async deleteAccount() {
-    const connectedUserAccount = await this._accountService.getConectedUserAccount();
-    this._accountService.deleteAccount(connectedUserAccount.id);
-  }
-
-
 }
