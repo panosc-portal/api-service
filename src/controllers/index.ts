@@ -1,4 +1,4 @@
-export * from './account-admin.controller';
+export * from './user-admin.controller';
 export * from './account-instance.controller';
-export * from './account.controller';
+export * from './user.controller';
 export * from './plan.controller';

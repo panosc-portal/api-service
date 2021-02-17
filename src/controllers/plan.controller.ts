@@ -33,7 +33,7 @@ export class PlanController extends BaseController {
   async getAll(): Promise<PlanDto[]> {
     try {
       // Ensure user is authenticated
-      await this._accountService.getConectedUserAccount();
+      await this._accountService.authenticate();
       return await this._cloudService.getPlans();
 
     } catch (error) {
@@ -60,7 +60,7 @@ export class PlanController extends BaseController {
   async getById(@param.path.number('planId') planId: number): Promise<PlanDto> {
     try {
         // Ensure user is authenticated
-      await this._accountService.getConectedUserAccount();
+      await this._accountService.authenticate();
       return await this._cloudService.getPlan(planId);
 
     } catch (error) {

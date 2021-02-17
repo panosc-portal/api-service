@@ -1,25 +1,22 @@
 import { bind, BindingScope, inject } from '@loopback/core';
-import { HttpErrors, Request } from '@loopback/rest';
+import { HttpErrors } from '@loopback/rest';
 import { AxiosInstance } from 'axios';
-import { Account } from '../models/account-service';
+import { AuthenticationToken, User } from '../models/account-service';
 import { PanoscCommonTsComponentBindings } from '@panosc-portal/panosc-common-ts';
 
 @bind({ scope: BindingScope.CONTEXT })
 export class AccountService {
 
   constructor(@inject(PanoscCommonTsComponentBindings.GATEWAY_CLIENT) private _axiosInstance: AxiosInstance) {
-    this._axiosInstance.defaults.baseURL += "account-service/api/v1/";
+    this._axiosInstance.defaults.baseURL += "account-service/api/";
   }
 
-  //=== Connected Account and Role
-
-  // Return the connected account for convenience
-  async getConectedUserAccount(): Promise<Account> {
+  async authenticate(): Promise<AuthenticationToken> {
     if (!this._axiosInstance.defaults.headers.access_token) {
       throw new HttpErrors[403](`The user is not connected`);
     }
 
-    const res = await this._axiosInstance.get('account', {
+    const res = await this._axiosInstance.get('authenticate', {
       headers: {
         'Content-Type': 'application/json',
       }
@@ -27,80 +24,52 @@ export class AccountService {
     return res.data;
   }
 
+  async requiredRole(roleName: string): Promise<AuthenticationToken> {
+    const authenticationToken = await this.authenticate();
 
-  async requiredRole(roleName: string): Promise<Account> {
-    const connectedUserAccount = await this.getConectedUserAccount();
-    if (roleName == 'user') return; //Anyone is user => no role check required
-    if (connectedUserAccount.roles == null || connectedUserAccount.roles.find(role => role.name === roleName) == null) {
+    if (roleName == null) {
+      return;
+    }
+
+    const user = authenticationToken.user;
+
+    if (user.roles == null || user.roles.find(role => role.name === roleName) == null) {
       throw new HttpErrors[403](`The connected required role is ${roleName}`);
     }
-    return connectedUserAccount;
+    return authenticationToken;
   }
 
-  async requireAdminRole(): Promise<Account> {
+  async requireAdminRole(): Promise<AuthenticationToken> {
     return this.requiredRole('admin');
   }
 
-  isAdmin(account: Account): boolean {
-    if (!account.roles) return false;
-    return account.roles.find(role => role.name === 'admin') != null;
+  isAdmin(user: User): boolean {
+    if (user.roles == null) {
+      return false;
+    }
+
+    return user.roles.find(role => role.name === 'admin') != null;
   }
 
 
-  //=== Accounts object
-
-  async getAccounts(): Promise<Account[]> {
-    const res = await this._axiosInstance.get('accounts');
+  async getUsers(): Promise<User[]> {
+    const res = await this._axiosInstance.get('users');
     return res.data;
   }
 
-  async getAccount(id: number): Promise<Account> {
-    const res = await this._axiosInstance.get(`accounts/${id}`);
+  async getUser(id: number): Promise<User> {
+    const res = await this._axiosInstance.get(`users/${id}`);
     return res.data;
   }
 
-  async createAccount(accountCreatorDto: Object): Promise<Account> {
-    const res = await this._axiosInstance.post('accounts', accountCreatorDto);
+  async addUserRole(userId: number, roleId: number): Promise<User> {
+    const res = await this._axiosInstance.post(`users/${userId}/roles/${roleId}`);
     return res.data;
   }
 
-  async updateAccount(id: number, accountUpdatorDto: Object): Promise<Account> {
-    const res = await this._axiosInstance.put(`accounts/${id}`, accountUpdatorDto);
+  async deleteUserRole(userId: number, roleId: number): Promise<boolean> {
+    const res = await this._axiosInstance.delete(`users/${userId}/roles/${roleId}`);
     return res.data;
   }
-
-  async deleteAccount(id: Number): Promise<boolean> {
-    const res = await this._axiosInstance.delete(`accounts/${id}`);
-    return res.data
-  }
-
-  //=== Accounts roles
-
-  async addAccountRole(accountId: number, roleId: number): Promise<Account> {
-    const res = await this._axiosInstance.post(`accounts/${accountId}/roles/${roleId}`);
-    return res.data;
-  }
-
-  async deleteAccountRole(accountId: number, roleId: number): Promise<boolean> {
-    const res = await this._axiosInstance.delete(`accounts/${accountId}/roles/${roleId}`);
-    return res.data;
-  }
-
-
-  //=== Roles
-
-
-
-  /*
-      private async _getApi(endpoint: string): Promise<any> {
-        try {
-          const res = await this._axiosInstance.get(endpoint);
-          return res.data;
-        } catch (error) {
-          //logger.error(`Got error getting ${this._baseUrl} from provider '${provider.name}': ${error}`);
-          throw error;
-        }
-      }
-      */
 
 }

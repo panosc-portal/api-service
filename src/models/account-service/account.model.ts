@@ -20,12 +20,6 @@ export class Account {
     required: true
   })
   username: string;
-
-  @property({
-    type: 'string'
-  })
-  email: string;
-
   @property({
     type: 'string'
   })
@@ -40,17 +34,6 @@ export class Account {
     type: 'number'
   })
   gid: number;
-
-  @property({
-    type: 'boolean'
-  })
-  active: boolean;
-
-  @property({
-    type: 'array',
-    itemType: Role
-  })
-  roles: Role[];
 
   constructor(data?: Partial<Account>) {
     Object.assign(this, data);
