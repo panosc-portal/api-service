@@ -1,7 +1,7 @@
 import { bind, BindingScope, inject } from '@loopback/core';
 import { HttpErrors } from '@loopback/rest';
 import { AxiosInstance } from 'axios';
-import { AuthenticationToken, User } from '../models/account-service';
+import { AuthenticationToken, Paginated, Query, Role, User } from '../models/account-service';
 import { PanoscCommonTsComponentBindings } from '@panosc-portal/panosc-common-ts';
 
 @bind({ scope: BindingScope.CONTEXT })
@@ -40,7 +40,7 @@ export class AccountService {
   }
 
   async requireAdminRole(): Promise<AuthenticationToken> {
-    return this.requiredRole('admin');
+    return this.requiredRole('ADMIN');
   }
 
   isAdmin(user: User): boolean {
@@ -48,12 +48,11 @@ export class AccountService {
       return false;
     }
 
-    return user.roles.find(role => role.name === 'admin') != null;
+    return user.roles.find(role => role.name === 'ADMIN') != null;
   }
 
-
-  async getUsers(): Promise<User[]> {
-    const res = await this._axiosInstance.get('users');
+  async searchForUsers(query: Query): Promise<Paginated<User>> {
+    const res = await this._axiosInstance.post('users/search', query);
     return res.data;
   }
 
@@ -71,5 +70,31 @@ export class AccountService {
     const res = await this._axiosInstance.delete(`users/${userId}/roles/${roleId}`);
     return res.data;
   }
+
+  async getSupportUsers(): Promise<User[]> {
+    const query: Query = {
+      join: [
+        {alias: 'role', member: 'user.roles', select: true, type: 'LEFT_OUTER_JOIN'},
+        {alias: 'role2', member: 'user.roles', select: false, type: 'LEFT_JOIN'}
+      ],
+      filter: [{
+        alias: 'role2.name',
+        parameter: 'roleName',
+        valueType: 'string[]',
+        value: '["IT_SUPPORT", "INSTRUMENT_CONTROL", "INSTRUMENT_SCIENTIST", "SCIENTIFIC_COMPUTING"]',
+        comparator: 'IN'
+      }]
+    }
+
+    const res = await this._axiosInstance.post('users/search', query);
+    const paginated: Paginated<User> = res.data;
+    return paginated.data;
+  }
+
+  async getUserRoles(): Promise<Role[]> {
+    const res = await this._axiosInstance.get(`roles`);
+    return res.data;
+  }
+
 
 }
