@@ -11,7 +11,7 @@ export class CloudService {
 
   constructor(@inject(PanoscCommonTsComponentBindings.GATEWAY_CLIENT) private _axiosInstance: AxiosInstance) {
 
-    this._axiosInstance.defaults.baseURL += "cloud-service/api/v1/";
+    this._axiosInstance.defaults.baseURL += "cloud-service/api/";
 
     // Add interceptor to encapsulate cloud service response errors
     this._axiosInstance.interceptors.response.use((response) => response, (error) => {
