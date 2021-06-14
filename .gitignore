@@ -65,4 +65,8 @@ typings/
 
 pgdata
 .vscode
+.idea
+
+cli/config.json
+cli/token.json
 
